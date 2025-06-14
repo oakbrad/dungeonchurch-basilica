@@ -489,7 +489,110 @@ document.addEventListener("DOMContentLoaded", function () {
               mapData.polygons.forEach(polygon => {
                 if (polygon.points && Array.isArray(polygon.points)) {
                   const options = polygon.options || {};
-                  L.polygon(polygon.points, options).addTo(map);
+                  
+                  // Extract tooltip from options if present and remove it from options
+                  // to prevent it from being passed to the polygon constructor
+                  const tooltipContent = options.tooltip;
+                  if (tooltipContent) {
+                    delete options.tooltip;
+                  }
+                  
+                  const p = L.polygon(polygon.points, options).addTo(map);
+                  
+                  // Add tooltip if specified - similar to marker tooltip handling
+                  if (tooltipContent) {
+                    // If polygon has a URL, append appropriate link bubble based on URL
+                    if (polygon.url) {
+                      // Get the SVG content from the partial
+                      const linkSvg = `{{> "icons/link"}}`;
+                      
+                      let linkText = '';
+                      
+                      // Check URL to determine what type of link it is
+                      if (polygon.url.includes('lore.dungeon.church')) {
+                        linkText = 'WIKI';
+                      } else if (polygon.url.includes('dungeon.church/map')) {
+                        linkText = 'MAP';
+                      } else if (polygon.url.includes('discord.')) {
+                        linkText = 'DISCORD';
+                      } else if (polygon.url.includes('5e.dungeon.church') || polygon.url.includes('5e.tools')) {
+                        linkText = '5eTOOLS';
+                      }
+                      
+                      // Create the bubble with the appropriate text and SVG
+                      const linkBubble = `<span class="tooltip-link-bubble">${linkText} ${linkSvg}</span>`;
+                      
+                      // Create tooltip content with mobile hint
+                      const tooltipHtml = `
+                        <div>${tooltipContent} ${linkBubble}</div>
+                        <div class="mobile-tooltip-hint">Tap again to open link</div>
+                      `;
+                      
+                      p.bindTooltip(tooltipHtml, { 
+                        permanent: false,
+                        sticky: true,
+                        direction: 'top',
+                        className: 'custom-tooltip',
+                        opacity: 1.0
+                      });
+                    } else {
+                      p.bindTooltip(tooltipContent, {
+                        sticky: true
+                      });
+                    }
+                  }
+                  
+                  // Add URL link if specified
+                  if (polygon.url) {
+                    // Track tooltip state for mobile two-step process
+                    let tooltipOpen = false;
+                    
+                    p.on('click', function(e) {
+                      // Detect if it's a mobile device
+                      const isMobile = window.innerWidth <= 768;
+                      
+                      if (isMobile) {
+                        // On mobile: first click opens tooltip, second click follows link
+                        if (!tooltipOpen) {
+                          // First click: open tooltip
+                          tooltipOpen = true;
+                          p.openTooltip(e.latlng); // Use click location for polygon tooltip
+                          
+                          // Prevent default click behavior
+                          L.DomEvent.stopPropagation(e);
+                          L.DomEvent.preventDefault(e);
+                          
+                          // Close tooltip when clicking elsewhere on the map
+                          map.once('click', function() {
+                            tooltipOpen = false;
+                            p.closeTooltip();
+                          });
+                        } else {
+                          // Second click: follow the link
+                          tooltipOpen = false;
+                          window.open(polygon.url, polygon.target || '_blank');
+                        }
+                      } else {
+                        // On desktop: just follow the link
+                        window.open(polygon.url, polygon.target || '_blank');
+                      }
+                    });
+                    
+                    // Add cursor style to indicate clickable polygon
+                    p.getElement().style.cursor = 'pointer';
+                  }
+                  
+                  // Add mouseover/mouseout events to show/hide tooltip
+                  p.on('mouseover', function(e) {
+                    p.openTooltip(e.latlng);
+                  });
+                  
+                  p.on('mouseout', function() {
+                    // Only close if not in the mobile two-step process
+                    if (!tooltipOpen) {
+                      p.closeTooltip();
+                    }
+                  });
                 }
               });
             }
