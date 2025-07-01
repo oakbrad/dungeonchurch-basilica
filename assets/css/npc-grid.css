@@ -76,7 +76,7 @@
     overflow: hidden;
 }
 
-.npc-image {
+.npc-image, .npc-token-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -84,6 +84,41 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
+}
+
+/* Image toggle button */
+.npc-image-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.npc-image-toggle svg {
+    width: 24px;
+    height: 24px;
+    fill: rgba(255, 255, 255, 0.9);
+}
+
+.npc-image-toggle:hover {
+    background-color: var(--ghost-accent-color);
+    transform: scale(1.1);
+}
+
+.npc-image-toggle.token-active {
+    background-color: var(--ghost-accent-color);
+    border-color: white;
 }
 
 /* NPC Content */
@@ -139,4 +174,3 @@
 .npc-download:hover {
     opacity: 0.9;
 }
-

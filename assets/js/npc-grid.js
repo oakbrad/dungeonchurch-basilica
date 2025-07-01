@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const npcData = extractNPCData(tableContainer);
         
         if (npcData.length === 0) {
-            npcGridContainer.innerHTML = '<p class="no-data-message">No NPC data found. Please add a markdown table to your post with columns for Name, Description, Artwork, File, and optionally Wiki.</p>';
+            npcGridContainer.innerHTML = '<p class="no-data-message">No NPC data found. Please add a markdown table to your post with columns for Name, Description, Artwork, Token, File, and optionally Wiki.</p>';
             return;
         }
         
@@ -55,12 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const nameIndex = headers.indexOf('name');
                 const descriptionIndex = headers.indexOf('description');
                 const artworkIndex = headers.indexOf('artwork');
+                const tokenIndex = headers.indexOf('token');
                 const fileIndex = headers.indexOf('file');
                 const wikiIndex = headers.indexOf('wiki');
                 
                 // Make sure we have the required columns
                 if (nameIndex === -1 || descriptionIndex === -1 || artworkIndex === -1 || fileIndex === -1) {
-                    console.error('Required columns missing from NPC table. Need Name, Description, Artwork, and File columns.');
+                    console.error('Required columns missing from NPC table. Need Name, Description, Artwork, Token, and File columns.');
                     return npcData;
                 }
                 
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             name: cells[nameIndex].textContent.trim(),
                             description: cells[descriptionIndex].textContent.trim(),
                             artwork: extractUrl(cells[artworkIndex]),
+                            token: tokenIndex !== -1 ? extractUrl(cells[tokenIndex]) : null,
                             file: extractUrl(cells[fileIndex]),
                             wiki: wikiIndex !== -1 ? extractUrl(cells[wikiIndex]) : null
                         };
@@ -123,6 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
         image.loading = 'lazy';
         
         imageContainer.appendChild(image);
+        
+        // Add token image and toggle if token is available
+        if (npc.token && npc.token.url && npc.token.url.trim() !== '') {
+            const tokenImage = document.createElement('img');
+            tokenImage.className = 'npc-token-image';
+            tokenImage.src = npc.token.url;
+            tokenImage.alt = `${npc.name} token`;
+            tokenImage.loading = 'lazy';
+            tokenImage.style.display = 'none'; // Initially hidden
+            
+            // Create toggle button
+            const toggleButton = document.createElement('button');
+            toggleButton.className = 'npc-image-toggle';
+            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79 4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>';
+            toggleButton.title = 'Toggle between portrait and token';
+            
+            // Add toggle functionality
+            toggleButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (image.style.display !== 'none') {
+                    image.style.display = 'none';
+                    tokenImage.style.display = 'block';
+                    toggleButton.classList.add('token-active');
+                } else {
+                    image.style.display = 'block';
+                    tokenImage.style.display = 'none';
+                    toggleButton.classList.remove('token-active');
+                }
+            });
+            
+            imageContainer.appendChild(tokenImage);
+            imageContainer.appendChild(toggleButton);
+        }
+        
         card.appendChild(imageContainer);
         
         // Create content container
@@ -167,4 +205,3 @@ document.addEventListener('DOMContentLoaded', function() {
         return card;
     }
 });
-
