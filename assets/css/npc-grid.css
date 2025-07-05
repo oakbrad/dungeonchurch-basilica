@@ -129,13 +129,13 @@
 }
 
 .npc-name a {
-    color: var(--ghost-accent-color);
+    color: white;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .npc-name a:hover {
-    opacity: 0.8;
+    color: var(--ghost-accent-color);
 }
 
 /* External link icon */
@@ -143,8 +143,8 @@
     font-size: 1.2rem;
     margin-left: 0.5rem;
     opacity: 0.6;
-    vertical-align: super;
-    color: var(--ghost-accent-color);
+    vertical-align: text-top;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* NPC Description */
