@@ -91,34 +91,24 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 30px;
-    height: 30px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: none;
+    border: none;
     cursor: pointer;
     z-index: 10;
     transition: all 0.2s ease;
     padding: 0;
-}
-
-.npc-image-toggle svg {
-    width: 20px;
-    height: 20px;
-    fill: rgba(255, 255, 255, 0.9);
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .npc-image-toggle:hover {
-    background-color: var(--ghost-accent-color);
     transform: scale(1.1);
+    color: var(--ghost-accent-color);
 }
 
-.npc-image-toggle.token-active {
-    background-color: var(--ghost-accent-color);
-    border-color: white;
+.npc-image-toggle.artwork-active {
+    color: var(--ghost-accent-color);
 }
 
 /* NPC Content */

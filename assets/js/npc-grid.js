@@ -1,5 +1,13 @@
 // NPC Grid functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Add Font Awesome if it's not already loaded
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+        const fontAwesomeLink = document.createElement('link');
+        fontAwesomeLink.rel = 'stylesheet';
+        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(fontAwesomeLink);
+    }
+    
     // Find the NPC grid container
     const npcGridContainer = document.querySelector('.npc-grid-container');
     const tableContainer = document.querySelector('.npc-table-container');
@@ -138,12 +146,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide the artwork image initially
             image.style.display = 'none';
             
-            // Create toggle button with simpler icon
+            // Create toggle button with Font Awesome icon
             const toggleButton = document.createElement('button');
             toggleButton.className = 'npc-image-toggle';
-            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-8h10v2H7v-2z"/></svg>';
-            toggleButton.title = 'Toggle between token and portrait';
-            toggleButton.classList.add('token-active'); // Initially in token mode
+            toggleButton.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+            toggleButton.title = 'Toggle between token and artwork';
             
             // Add toggle functionality
             toggleButton.addEventListener('click', function(e) {
@@ -151,15 +158,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.stopPropagation();
                 
                 if (tokenImage.style.display !== 'none') {
+                    // Switch to artwork view
                     tokenImage.style.display = 'none';
                     image.style.display = 'block';
-                    toggleButton.classList.remove('token-active');
-                    toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-8h10v2H7v-2z"/></svg>';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-toggle-on"></i>';
+                    toggleButton.classList.add('artwork-active');
                 } else {
+                    // Switch to token view
                     tokenImage.style.display = 'block';
                     image.style.display = 'none';
-                    toggleButton.classList.add('token-active');
-                    toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm5-10v2H7v-2h10z"/></svg>';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+                    toggleButton.classList.remove('artwork-active');
                 }
             });
             
