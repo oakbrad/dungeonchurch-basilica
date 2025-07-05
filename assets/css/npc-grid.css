@@ -89,8 +89,8 @@
 /* Image toggle button */
 .npc-image-toggle {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 2px;
+    right: 5px;
     background: none;
     border: none;
     cursor: pointer;
@@ -98,17 +98,17 @@
     transition: all 0.2s ease;
     padding: 0;
     font-size: 24px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.6);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .npc-image-toggle:hover {
     transform: scale(1.1);
-    color: var(--ghost-accent-color);
+    color: var(--ghost-accent-color) !important;
 }
 
 .npc-image-toggle.artwork-active {
-    color: var(--ghost-accent-color);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* NPC Content */
@@ -155,7 +155,7 @@
     text-align: center;
     padding: 0.8rem;
     border-radius: 4px;
-    text-decoration: none;
+    text-decoration: none !important;
     font-weight: 600;
     transition: background-color 0.2s ease;
     margin-top: auto;

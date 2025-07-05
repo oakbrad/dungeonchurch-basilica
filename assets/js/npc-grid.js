@@ -1,13 +1,5 @@
 // NPC Grid functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Add Font Awesome if it's not already loaded
-    if (!document.querySelector('link[href*="font-awesome"]')) {
-        const fontAwesomeLink = document.createElement('link');
-        fontAwesomeLink.rel = 'stylesheet';
-        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-        document.head.appendChild(fontAwesomeLink);
-    }
-    
     // Find the NPC grid container
     const npcGridContainer = document.querySelector('.npc-grid-container');
     const tableContainer = document.querySelector('.npc-table-container');
@@ -149,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create toggle button with Font Awesome icon
             const toggleButton = document.createElement('button');
             toggleButton.className = 'npc-image-toggle';
-            toggleButton.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+            toggleButton.innerHTML = '<i class="fa-solid fa-image"></i>';
             toggleButton.title = 'Toggle between token and artwork';
             
             // Add toggle functionality
@@ -161,13 +153,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Switch to artwork view
                     tokenImage.style.display = 'none';
                     image.style.display = 'block';
-                    toggleButton.innerHTML = '<i class="fa-solid fa-toggle-on"></i>';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-circle-user"></i>';
                     toggleButton.classList.add('artwork-active');
                 } else {
                     // Switch to token view
                     tokenImage.style.display = 'block';
                     image.style.display = 'none';
-                    toggleButton.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-image"></i>';
                     toggleButton.classList.remove('artwork-active');
                 }
             });
