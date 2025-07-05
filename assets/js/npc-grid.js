@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const npcData = extractNPCData(tableContainer);
         
         if (npcData.length === 0) {
-            npcGridContainer.innerHTML = '<p class="no-data-message">No NPC data found. Please add a markdown table to your post with columns for Name, Description, Artwork, File, and optionally Wiki.</p>';
+            npcGridContainer.innerHTML = '<p class="no-data-message">No NPC data found. Please add a markdown table to your post with columns for Name, Description, Artwork, Token, File, and optionally Wiki.</p>';
             return;
         }
         
@@ -55,12 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const nameIndex = headers.indexOf('name');
                 const descriptionIndex = headers.indexOf('description');
                 const artworkIndex = headers.indexOf('artwork');
+                const tokenIndex = headers.indexOf('token');
                 const fileIndex = headers.indexOf('file');
                 const wikiIndex = headers.indexOf('wiki');
                 
                 // Make sure we have the required columns
                 if (nameIndex === -1 || descriptionIndex === -1 || artworkIndex === -1 || fileIndex === -1) {
-                    console.error('Required columns missing from NPC table. Need Name, Description, Artwork, and File columns.');
+                    console.error('Required columns missing from NPC table. Need Name, Description, Artwork, Token, and File columns.');
                     return npcData;
                 }
                 
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             name: cells[nameIndex].textContent.trim(),
                             description: cells[descriptionIndex].textContent.trim(),
                             artwork: extractUrl(cells[artworkIndex]),
+                            token: tokenIndex !== -1 ? extractUrl(cells[tokenIndex]) : null,
                             file: extractUrl(cells[fileIndex]),
                             wiki: wikiIndex !== -1 ? extractUrl(cells[wikiIndex]) : null
                         };
@@ -123,6 +125,49 @@ document.addEventListener('DOMContentLoaded', function() {
         image.loading = 'lazy';
         
         imageContainer.appendChild(image);
+        
+        // Add token image and toggle if token is available
+        if (npc.token && npc.token.url && npc.token.url.trim() !== '') {
+            const tokenImage = document.createElement('img');
+            tokenImage.className = 'npc-token-image';
+            tokenImage.src = npc.token.url;
+            tokenImage.alt = `${npc.name} token`;
+            tokenImage.loading = 'lazy';
+            tokenImage.style.display = 'block'; // Initially visible (token is default)
+            
+            // Hide the artwork image initially
+            image.style.display = 'none';
+            
+            // Create toggle button with Font Awesome icon
+            const toggleButton = document.createElement('button');
+            toggleButton.className = 'npc-image-toggle';
+            toggleButton.innerHTML = '<i class="fa-solid fa-image"></i>';
+            toggleButton.title = 'Toggle between token and artwork';
+            
+            // Add toggle functionality
+            toggleButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (tokenImage.style.display !== 'none') {
+                    // Switch to artwork view
+                    tokenImage.style.display = 'none';
+                    image.style.display = 'block';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-circle-user"></i>';
+                    toggleButton.classList.add('artwork-active');
+                } else {
+                    // Switch to token view
+                    tokenImage.style.display = 'block';
+                    image.style.display = 'none';
+                    toggleButton.innerHTML = '<i class="fa-solid fa-image"></i>';
+                    toggleButton.classList.remove('artwork-active');
+                }
+            });
+            
+            imageContainer.appendChild(tokenImage);
+            imageContainer.appendChild(toggleButton);
+        }
+        
         card.appendChild(imageContainer);
         
         // Create content container
@@ -141,6 +186,12 @@ document.addEventListener('DOMContentLoaded', function() {
             nameLink.target = '_blank';
             nameLink.rel = 'noopener noreferrer';
             nameElement.appendChild(nameLink);
+            
+            // Add external link icon
+            const externalIcon = document.createElement('i');
+            externalIcon.className = 'fa-solid fa-external-link-alt npc-external-link-icon';
+            externalIcon.setAttribute('aria-hidden', 'true');
+            nameElement.appendChild(externalIcon);
         } else {
             nameElement.textContent = npc.name;
         }
@@ -167,4 +218,3 @@ document.addEventListener('DOMContentLoaded', function() {
         return card;
     }
 });
-
