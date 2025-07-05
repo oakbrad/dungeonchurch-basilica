@@ -133,27 +133,33 @@ document.addEventListener('DOMContentLoaded', function() {
             tokenImage.src = npc.token.url;
             tokenImage.alt = `${npc.name} token`;
             tokenImage.loading = 'lazy';
-            tokenImage.style.display = 'none'; // Initially hidden
+            tokenImage.style.display = 'block'; // Initially visible (token is default)
             
-            // Create toggle button
+            // Hide the artwork image initially
+            image.style.display = 'none';
+            
+            // Create toggle button with simpler icon
             const toggleButton = document.createElement('button');
             toggleButton.className = 'npc-image-toggle';
-            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79 4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>';
-            toggleButton.title = 'Toggle between portrait and token';
+            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-8h10v2H7v-2z"/></svg>';
+            toggleButton.title = 'Toggle between token and portrait';
+            toggleButton.classList.add('token-active'); // Initially in token mode
             
             // Add toggle functionality
             toggleButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                if (image.style.display !== 'none') {
-                    image.style.display = 'none';
-                    tokenImage.style.display = 'block';
-                    toggleButton.classList.add('token-active');
-                } else {
-                    image.style.display = 'block';
+                if (tokenImage.style.display !== 'none') {
                     tokenImage.style.display = 'none';
+                    image.style.display = 'block';
                     toggleButton.classList.remove('token-active');
+                    toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-8h10v2H7v-2z"/></svg>';
+                } else {
+                    tokenImage.style.display = 'block';
+                    image.style.display = 'none';
+                    toggleButton.classList.add('token-active');
+                    toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm5-10v2H7v-2h10z"/></svg>';
                 }
             });
             
