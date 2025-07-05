@@ -186,6 +186,12 @@ document.addEventListener('DOMContentLoaded', function() {
             nameLink.target = '_blank';
             nameLink.rel = 'noopener noreferrer';
             nameElement.appendChild(nameLink);
+            
+            // Add external link icon
+            const externalIcon = document.createElement('i');
+            externalIcon.className = 'fa-solid fa-external-link-alt npc-external-link-icon';
+            externalIcon.setAttribute('aria-hidden', 'true');
+            nameElement.appendChild(externalIcon);
         } else {
             nameElement.textContent = npc.name;
         }
