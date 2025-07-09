@@ -1,0 +1,79 @@
+{{!< default}}
+{{#contentFor "title"}}{{post.title}} - Wiki Visualization{{/contentFor}}
+
+{{!-- The tag above means: insert everything in this file
+into the {body} tag of the default.hbs template --}}
+
+<style>
+    /* Custom styles for the wiki visualization page */
+    .wiki-viz-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 88px); /* Subtract header height */
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .wiki-viz-container iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+    
+    /* Hide the footer on this template */
+    .site-footer {
+        display: none;
+    }
+    
+    /* Ensure the content takes up full height */
+    .site-content {
+        min-height: calc(100vh - 88px);
+    }
+    
+    /* Optional: Add a loading indicator */
+    .wiki-viz-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        color: var(--ghost-accent-color);
+    }
+</style>
+
+{{#post}}
+{{!-- Everything inside the #post block pulls data from the post --}}
+
+<div class="wiki-viz-container">
+    <div class="wiki-viz-loading">Loading visualization...</div>
+    <iframe src="https://oakbrad.github.io/dungeonchurch-oracle/" title="Dungeon Church Wiki Oracle" allowfullscreen></iframe>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const iframe = document.querySelector('.wiki-viz-container iframe');
+    const loadingIndicator = document.querySelector('.wiki-viz-loading');
+    
+    // Hide loading indicator when iframe is loaded
+    iframe.addEventListener('load', function() {
+        loadingIndicator.style.display = 'none';
+    });
+    
+    // Adjust iframe height on window resize
+    function adjustIframeHeight() {
+        const headerHeight = document.getElementById('gh-head').offsetHeight;
+        const container = document.querySelector('.wiki-viz-container');
+        container.style.height = `calc(100vh - ${headerHeight}px)`;
+    }
+    
+    // Initial adjustment
+    adjustIframeHeight();
+    
+    // Adjust on resize
+    window.addEventListener('resize', adjustIframeHeight);
+});
+</script>
+
+{{/post}}
+
