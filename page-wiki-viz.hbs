@@ -19,6 +19,8 @@ into the {body} tag of the default.hbs template --}}
         width: 100%;
         height: 100%;
         border: 0;
+        position: relative;
+        z-index: 2;
     }
     
     /* Hide the footer on this template */
@@ -31,14 +33,48 @@ into the {body} tag of the default.hbs template --}}
         min-height: calc(100vh - 88px);
     }
     
-    /* Optional: Add a loading indicator */
+    /* Loading indicator with spinning sigil */
     .wiki-viz-loading {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 3;
+        color: #fff;
+    }
+    
+    .wiki-viz-loading-text {
         font-size: 1.5rem;
+        margin-top: 20px;
         color: var(--ghost-accent-color);
+        font-weight: bold;
+    }
+    
+    .wiki-viz-sigil {
+        width: 150px;
+        height: 150px;
+        animation: spin 4s infinite linear;
+        opacity: 0.8;
+    }
+    
+    .wiki-viz-sigil svg {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .wiki-viz-sigil svg path {
+        fill: var(--ghost-accent-color);
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
 
@@ -46,7 +82,12 @@ into the {body} tag of the default.hbs template --}}
 {{!-- Everything inside the #post block pulls data from the post --}}
 
 <div class="wiki-viz-container">
-    <div class="wiki-viz-loading">Loading visualization...</div>
+    <div class="wiki-viz-loading">
+        <div class="wiki-viz-sigil">
+            {{> "icons/sigil"}}
+        </div>
+        <div class="wiki-viz-loading-text">Loading visualization...</div>
+    </div>
     <iframe src="https://oakbrad.github.io/dungeonchurch-oracle/" title="Dungeon Church Wiki Oracle" allowfullscreen></iframe>
 </div>
 
@@ -57,7 +98,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Hide loading indicator when iframe is loaded
     iframe.addEventListener('load', function() {
-        loadingIndicator.style.display = 'none';
+        // Add a slight delay for smoother transition
+        setTimeout(function() {
+            loadingIndicator.style.opacity = '0';
+            loadingIndicator.style.transition = 'opacity 0.5s ease-out';
+            
+            // Remove from DOM after fade out
+            setTimeout(function() {
+                loadingIndicator.style.display = 'none';
+            }, 500);
+        }, 500);
     });
     
     // Adjust iframe height on window resize
