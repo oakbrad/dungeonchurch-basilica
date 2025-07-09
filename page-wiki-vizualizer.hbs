@@ -1,0 +1,126 @@
+{{!< default}}
+{{#contentFor "title"}}{{post.title}} - Wiki Visualization{{/contentFor}}
+
+{{!-- The tag above means: insert everything in this file
+into the {body} tag of the default.hbs template --}}
+
+<style>
+    /* Custom styles for the wiki visualization page */
+    .wiki-viz-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 88px); /* Subtract header height */
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .wiki-viz-container iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Hide the footer on this template */
+    .site-footer {
+        display: none;
+    }
+    
+    /* Ensure the content takes up full height */
+    .site-content {
+        min-height: calc(100vh - 88px);
+    }
+    
+    /* Loading indicator with spinning sigil */
+    .wiki-viz-loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 3;
+        color: #fff;
+    }
+    
+    .wiki-viz-loading-text {
+        font-size: 6rem;
+        font-family: Waning Star;
+        margin-top: 20px;
+        color: var(--ghost-accent-color);
+        font-weight: bold;
+    }
+    
+    .wiki-viz-sigil {
+        width: 150px;
+        height: 150px;
+        animation: spin 4s infinite linear;
+        opacity: 0.8;
+    }
+    
+    .wiki-viz-sigil svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+{{#post}}
+{{!-- Everything inside the #post block pulls data from the post --}}
+
+<div class="wiki-viz-container">
+    <div class="wiki-viz-loading">
+        <div class="wiki-viz-sigil">
+            {{> "icons/sigil"}}
+        </div>
+        <div class="wiki-viz-loading-text">Loading visualization...</div>
+    </div>
+    <iframe src="https://oakbrad.github.io/dungeonchurch-oracle/" title="Dungeon Church Wiki Oracle" allowfullscreen></iframe>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const iframe = document.querySelector('.wiki-viz-container iframe');
+    const loadingIndicator = document.querySelector('.wiki-viz-loading');
+    
+    // Hide loading indicator when iframe is loaded
+    iframe.addEventListener('load', function() {
+        // Add a slight delay for smoother transition
+        setTimeout(function() {
+            loadingIndicator.style.opacity = '0';
+            loadingIndicator.style.transition = 'opacity 0.3s ease-out';
+            
+            // Remove from DOM after fade out
+            setTimeout(function() {
+                loadingIndicator.style.display = 'none';
+            }, 500);
+        }, 500);
+    });
+    
+    // Adjust iframe height on window resize
+    function adjustIframeHeight() {
+        const headerHeight = document.getElementById('gh-head').offsetHeight;
+        const container = document.querySelector('.wiki-viz-container');
+        container.style.height = `calc(100vh - ${headerHeight}px)`;
+    }
+    
+    // Initial adjustment
+    adjustIframeHeight();
+    
+    // Adjust on resize
+    window.addEventListener('resize', adjustIframeHeight);
+});
+</script>
+
+{{/post}}
+

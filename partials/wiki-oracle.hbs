@@ -1,0 +1,108 @@
+{{!-- 
+    WIKI ORACLE PARTIAL
+    
+    This partial embeds the Dungeon Church Oracle in a regular content width iframe.
+    
+    USAGE:
+    {{> "wiki-oracle"}}
+    
+    With custom height (via data attribute):
+    <div class="wiki-oracle-container" data-height="800">
+        {{> "wiki-oracle"}}
+    </div>
+    
+    With custom mobile height (via data attribute):
+    <div class="wiki-oracle-container" data-height="800" data-mobile-height="500">
+        {{> "wiki-oracle"}}
+    </div>
+--}}
+
+<style>
+    .wiki-oracle-container {
+        width: 100%;
+        margin: 2rem 0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .wiki-oracle-container iframe {
+        width: 100%;
+        height: 600px; /* Default height, will be overridden by JavaScript if needed */
+        border: 1px solid var(--ghost-accent-color);
+        border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .wiki-oracle-container iframe {
+            height: 420px; /* Default mobile height, will be overridden by JavaScript if needed */
+        }
+    }
+</style>
+
+<div class="wiki-oracle-container">
+    <iframe src="https://oakbrad.github.io/dungeonchurch-oracle/" title="Dungeon Church Wiki Oracle" allowfullscreen></iframe>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Find all wiki-oracle containers
+    const containers = document.querySelectorAll('.wiki-oracle-container');
+    
+    containers.forEach(container => {
+        const iframe = container.querySelector('iframe');
+        if (!iframe) return;
+        
+        // Check for height from meta tag first (highest priority)
+        const heightMeta = document.querySelector('meta[name="custom:oracle-height"]');
+        const mobileHeightMeta = document.querySelector('meta[name="custom:oracle-mobile-height"]');
+        
+        let height = null;
+        let mobileHeight = null;
+        
+        // 1. First priority: Check meta tags (for code injection)
+        if (heightMeta) {
+            height = heightMeta.getAttribute('content');
+        }
+        
+        if (mobileHeightMeta) {
+            mobileHeight = mobileHeightMeta.getAttribute('content');
+        }
+        
+        // 2. Second priority: Check parent container for data attributes
+        if (!height && container.dataset.height) {
+            height = container.dataset.height;
+        }
+        
+        if (!mobileHeight && container.dataset.mobileHeight) {
+            mobileHeight = container.dataset.mobileHeight;
+        }
+        
+        // Apply height if specified
+        if (height) {
+            iframe.style.height = `${height}px`;
+        }
+        
+        // Apply mobile height using media query
+        if (mobileHeight) {
+            // Create a style element for the media query
+            const style = document.createElement('style');
+            style.textContent = `
+                @media (max-width: 768px) {
+                    #${iframe.id || `oracle-iframe-${Math.random().toString(36).substr(2, 9)}`} {
+                        height: ${mobileHeight}px !important;
+                    }
+                }
+            `;
+            
+            // Ensure the iframe has an ID for the CSS selector
+            if (!iframe.id) {
+                iframe.id = `oracle-iframe-${Math.random().toString(36).substr(2, 9)}`;
+            }
+            
+            // Add the style to the document
+            document.head.appendChild(style);
+        }
+    });
+});
+</script>
+
