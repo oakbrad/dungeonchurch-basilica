@@ -5,6 +5,12 @@
     
     USAGE:
     {{> "wiki-oracle-wide"}}
+    
+    With custom height:
+    {{> "wiki-oracle-wide" height="800"}}
+    
+    With custom mobile height (for screens smaller than 768px):
+    {{> "wiki-oracle-wide" height="800" mobileHeight="500"}}
 --}}
 
 <style>
@@ -22,7 +28,7 @@
     
     .wiki-oracle-wide-container iframe {
         width: 100%;
-        height: 700px;
+        height: {{#if height}}{{height}}px{{else}}600px{{/if}};
         border: 0px solid var(--color-border);
         border-radius: 0;
     }
@@ -30,7 +36,7 @@
     /* Add responsive height adjustments */
     @media (max-width: 768px) {
         .wiki-oracle-wide-container iframe {
-            height: 500px;
+            height: {{#if mobileHeight}}{{mobileHeight}}px{{else}}{{#if height}}{{height}}px{{else}}420px{{/if}}{{/if}};
         }
     }
 </style>

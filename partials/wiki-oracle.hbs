@@ -5,6 +5,12 @@
     
     USAGE:
     {{> "wiki-oracle"}}
+    
+    With custom height:
+    {{> "wiki-oracle" height="800"}}
+    
+    With custom mobile height (for screens smaller than 768px):
+    {{> "wiki-oracle" height="800" mobileHeight="500"}}
 --}}
 
 <style>
@@ -17,9 +23,16 @@
     
     .wiki-oracle-container iframe {
         width: 100%;
-        height: 600px;
+        height: {{#if height}}{{height}}px{{else}}600px{{/if}};
         border: 1px solid var(--ghost-accent-color);
         border-radius: 5px;
+    }
+    
+    /* Add responsive height adjustments */
+    @media (max-width: 768px) {
+        .wiki-oracle-container iframe {
+            height: {{#if mobileHeight}}{{mobileHeight}}px{{else}}{{#if height}}{{height}}px{{else}}420px{{/if}}{{/if}};
+        }
     }
 </style>
 
