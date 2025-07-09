@@ -50,7 +50,8 @@ into the {body} tag of the default.hbs template --}}
     }
     
     .wiki-viz-loading-text {
-        font-size: 1.5rem;
+        font-size: 6rem;
+        font-family: Waning Star;
         margin-top: 20px;
         color: var(--ghost-accent-color);
         font-weight: bold;
@@ -67,11 +68,7 @@ into the {body} tag of the default.hbs template --}}
         width: 100%;
         height: 100%;
     }
-    
-    .wiki-viz-sigil svg path {
-        fill: var(--ghost-accent-color);
-    }
-    
+
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
@@ -101,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Add a slight delay for smoother transition
         setTimeout(function() {
             loadingIndicator.style.opacity = '0';
-            loadingIndicator.style.transition = 'opacity 0.5s ease-out';
+            loadingIndicator.style.transition = 'opacity 0.3s ease-out';
             
             // Remove from DOM after fade out
             setTimeout(function() {
