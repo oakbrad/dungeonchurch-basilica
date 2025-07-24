@@ -9,6 +9,10 @@ table {
     margin-right: auto;
     display: table !important;
     min-width: 70% !important;
+    white-space: normal !important;
+}
+.gh-content table thead tr {
+    white-space: nowrap !important;
 }
 
 /* Every other row dark gray */
@@ -19,6 +23,8 @@ tr:nth-child(even) {
 /* hover */
 tbody tr:hover {
     background-color: var(--ghost-accent-color);
+    color: #fff !important;
+    font-weight: bold !important;
 }
 table tbody tr:hover td:nth-of-type(1) {
     font-weight: bold !important;
