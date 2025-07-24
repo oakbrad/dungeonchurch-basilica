@@ -44,7 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Display the result with a slight delay and animation
                 setTimeout(() => {
                     // Use innerHTML to preserve HTML links
-                    tableRollerResult.innerHTML = result;
+                    tableRollerResult.innerHTML = result.mainResult;
+                    
+                    // Add the optional third column in italics if it exists
+                    if (result.description) {
+                        tableRollerResult.innerHTML += '<div class="table-roller-description"><em>' + result.description + '</em></div>';
+                    }
                     
                     // Add target="_blank" to all links in the result
                     const links = tableRollerResult.querySelectorAll('a');
@@ -76,14 +81,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Extract data from each row
                 rows.forEach(row => {
-                    // Get the second column (index 1) if it exists, otherwise get the first column
                     const cells = row.querySelectorAll('td');
+                    
+                    // Create a result object
+                    const resultObj = {
+                        mainResult: '',
+                        description: ''
+                    };
+                    
                     if (cells.length > 1) {
-                        // Use innerHTML instead of textContent to preserve links
-                        tableData.push(cells[1].innerHTML.trim());
+                        // Use the second column (index 1) for the main result
+                        resultObj.mainResult = cells[1].innerHTML.trim();
+                        
+                        // If there's a third column, use it for the description
+                        if (cells.length > 2) {
+                            resultObj.description = cells[2].innerHTML.trim();
+                        }
                     } else if (cells.length > 0) {
-                        tableData.push(cells[0].innerHTML.trim());
+                        // If there's only one column, use it for the main result
+                        resultObj.mainResult = cells[0].innerHTML.trim();
                     }
+                    
+                    tableData.push(resultObj);
                 });
             }
         }
@@ -91,4 +110,3 @@ document.addEventListener('DOMContentLoaded', function() {
         return tableData;
     }
 });
-
