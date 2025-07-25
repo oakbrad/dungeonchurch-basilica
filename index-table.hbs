@@ -81,6 +81,18 @@ into the {body} of the default.hbs template --}}
         background: transparent;
     }
     
+    /* Add this to make the iframe content transparent */
+    #dice-overlay-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        pointer-events: none; /* Click-through */
+        background: transparent;
+    }
+    
     .table-list {
         width: 100%;
         max-width: 800px;
@@ -122,14 +134,22 @@ into the {body} of the default.hbs template --}}
 
 <script>
     function showDiceRoll(roll = "1d20", duration = 5000) {
+        // Create a container div
+        const container = document.createElement("div");
+        container.id = "dice-overlay-container";
+        document.body.appendChild(container);
+        
+        // Create the iframe inside the container
         const iframe = document.createElement("iframe");
         iframe.id = "dice-overlay";
-        iframe.src = `https://dice.bee.ac/?chromahex=00000000&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
-
-        document.body.appendChild(iframe);
+        iframe.src = `https://dice.bee.ac/?roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
+        iframe.allowTransparency = "true"; // Add this attribute
+        iframe.style.backgroundColor = "transparent"; // Add this style
+        
+        container.appendChild(iframe);
 
         setTimeout(() => {
-            iframe.remove();
+            container.remove();
         }, duration); // remove after roll animation completes
     }
 
@@ -138,4 +158,3 @@ into the {body} of the default.hbs template --}}
         showDiceRoll("1d20");
     });
 </script>
-
