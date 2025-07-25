@@ -142,9 +142,15 @@ into the {body} of the default.hbs template --}}
         // Create the iframe inside the container
         const iframe = document.createElement("iframe");
         iframe.id = "dice-overlay";
-        iframe.src = `https://dice.bee.ac/?roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
-        iframe.allowTransparency = "true"; // Add this attribute
-        iframe.style.backgroundColor = "transparent"; // Add this style
+        
+        // Try different URL parameters for transparency
+        // Based on Andy Lawton's documentation, chromahex should set the background color
+        // We're trying with "transparent" as the value
+        iframe.src = `https://dice.bee.ac/?chromahex=transparent&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
+        
+        // Add additional attributes for transparency
+        iframe.allowTransparency = "true";
+        iframe.style.backgroundColor = "transparent";
         
         container.appendChild(iframe);
 
