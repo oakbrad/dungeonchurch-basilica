@@ -93,6 +93,37 @@ into the {body} of the default.hbs template --}}
         background: transparent;
     }
     
+    /* Add CSS for the green screen effect */
+    .chroma-key-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* This is a more advanced approach using mix-blend-mode */
+    .chroma-key-iframe {
+        mix-blend-mode: multiply;
+    }
+    
+    /* Style for the roll button */
+    .roll-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 10px 20px;
+        background-color: #ff2600;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .roll-button:hover {
+        background-color: #cc1e00;
+    }
+    
     .table-list {
         width: 100%;
         max-width: 800px;
@@ -134,26 +165,23 @@ into the {body} of the default.hbs template --}}
 
 <script>
     function showDiceRoll(roll = "1d20", duration = 5000) {
-        // Create a container div with a specific background color that can be made transparent
+        // Create a container div with chroma key class
         const container = document.createElement("div");
         container.id = "dice-overlay-container";
+        container.className = "chroma-key-container";
         document.body.appendChild(container);
         
         // Create the iframe inside the container
         const iframe = document.createElement("iframe");
         iframe.id = "dice-overlay";
+        iframe.className = "chroma-key-iframe";
         
-        // Try with a specific color that we can make transparent with CSS
-        // Using a very specific green color (#00FF00) that we can key out with CSS
-        iframe.src = `https://dice.bee.ac/?chromahex=00FF00&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
+        // Try with a black background and use CSS blend modes
+        iframe.src = `https://dice.bee.ac/?chromahex=000000&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
         
         // Add additional attributes for transparency
         iframe.allowTransparency = "true";
         iframe.style.backgroundColor = "transparent";
-        
-        // Apply a CSS filter to make the green background transparent
-        // This uses a combination of CSS filters to remove the green color
-        iframe.style.filter = "chroma(color=#00FF00)";
         
         container.appendChild(iframe);
 
@@ -171,10 +199,7 @@ into the {body} of the default.hbs template --}}
     document.addEventListener("DOMContentLoaded", () => {
         const rollButton = document.createElement("button");
         rollButton.textContent = "Roll Dice";
-        rollButton.style.position = "fixed";
-        rollButton.style.bottom = "20px";
-        rollButton.style.right = "20px";
-        rollButton.style.zIndex = "1000";
+        rollButton.className = "roll-button";
         rollButton.addEventListener("click", () => {
             showDiceRoll("1d20");
         });
