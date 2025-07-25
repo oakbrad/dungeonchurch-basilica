@@ -91,6 +91,7 @@ into the {body} of the default.hbs template --}}
         z-index: 9999;
         pointer-events: none; /* Click-through */
         background: transparent;
+        overflow: hidden;
     }
     
     /* Add CSS for the green screen effect */
@@ -101,7 +102,7 @@ into the {body} of the default.hbs template --}}
     
     /* This is a more advanced approach using mix-blend-mode */
     .chroma-key-iframe {
-        mix-blend-mode: multiply;
+        mix-blend-mode: screen;
     }
     
     /* Style for the roll button */
@@ -122,6 +123,17 @@ into the {body} of the default.hbs template --}}
     
     .roll-button:hover {
         background-color: #cc1e00;
+    }
+    
+    /* Add a canvas overlay approach */
+    #dice-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9998;
+        pointer-events: none;
     }
     
     .table-list {
@@ -164,6 +176,14 @@ into the {body} of the default.hbs template --}}
 </style>
 
 <script>
+    // Create a canvas element for the dice animation
+    function createDiceCanvas() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'dice-canvas';
+        document.body.appendChild(canvas);
+        return canvas;
+    }
+    
     function showDiceRoll(roll = "1d20", duration = 5000) {
         // Create a container div
         const container = document.createElement("div");
@@ -171,34 +191,24 @@ into the {body} of the default.hbs template --}}
         container.className = "chroma-key-container";
         document.body.appendChild(container);
         
-        // Create the iframe inside the container
+        // Create the iframe with a specific approach for transparency
         const iframe = document.createElement("iframe");
         iframe.id = "dice-overlay";
+        iframe.className = "chroma-key-iframe";
         
-        // Set the source URL
-        iframe.src = `https://dice.bee.ac/?roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
+        // Try with a specific color that might work better with blend modes
+        // Using a very dark color with screen blend mode
+        iframe.src = `https://dice.bee.ac/?chromahex=000000&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
         
-        // Add additional attributes for transparency
+        // Add all possible transparency attributes
         iframe.allowTransparency = "true";
         iframe.style.backgroundColor = "transparent";
+        iframe.style.mixBlendMode = "screen";
+        iframe.setAttribute("frameBorder", "0");
+        iframe.setAttribute("scrolling", "no");
         
-        // Add onload event to modify the iframe's content document
-        iframe.onload = function() {
-            try {
-                const doc = iframe.contentWindow.document;
-                const head = doc.querySelector('head');
-                const style = doc.createElement('style');
-                
-                style.setAttribute('type', 'text/css');
-                style.innerHTML = 'body { background: transparent !important; }';
-                
-                head.appendChild(style);
-                
-                console.log("Successfully injected style into iframe");
-            } catch (e) {
-                console.error("Error modifying iframe content:", e);
-            }
-        };
+        // Add sandbox attribute to potentially help with cross-origin issues
+        iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
         
         container.appendChild(iframe);
 
@@ -207,19 +217,63 @@ into the {body} of the default.hbs template --}}
         }, duration); // remove after roll animation completes
     }
 
-    // Trigger when page loads
+    // Alternative approach using a video element
+    function showDiceRollVideo(duration = 5000) {
+        // Create a container
+        const container = document.createElement("div");
+        container.id = "dice-overlay-container";
+        document.body.appendChild(container);
+        
+        // Create a video element instead of an iframe
+        const video = document.createElement("video");
+        video.id = "dice-overlay";
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = false;
+        video.style.width = "100vw";
+        video.style.height = "100vh";
+        video.style.objectFit = "cover";
+        
+        // Add a source with a video of dice rolling (this is a placeholder URL)
+        // You would need to create and host this video
+        const source = document.createElement("source");
+        source.src = "/assets/videos/dice-roll.mp4";
+        source.type = "video/mp4";
+        
+        video.appendChild(source);
+        container.appendChild(video);
+        
+        // Remove after duration
+        setTimeout(() => {
+            container.remove();
+        }, duration);
+    }
+
+    // Trigger when page loads - try the iframe approach first
     window.addEventListener("load", () => {
         showDiceRoll("1d20");
     });
     
-    // Add a button to manually trigger the dice roll for testing
+    // Add buttons to test different approaches
     document.addEventListener("DOMContentLoaded", () => {
+        // Button for iframe approach
         const rollButton = document.createElement("button");
-        rollButton.textContent = "Roll Dice";
+        rollButton.textContent = "Roll Dice (iframe)";
         rollButton.className = "roll-button";
+        rollButton.style.right = "20px";
         rollButton.addEventListener("click", () => {
             showDiceRoll("1d20");
         });
         document.body.appendChild(rollButton);
+        
+        // Button for video approach (if you have a video file)
+        const videoButton = document.createElement("button");
+        videoButton.textContent = "Roll Dice (video)";
+        videoButton.className = "roll-button";
+        videoButton.style.right = "180px";
+        videoButton.addEventListener("click", () => {
+            showDiceRollVideo();
+        });
+        document.body.appendChild(videoButton);
     });
 </script>
