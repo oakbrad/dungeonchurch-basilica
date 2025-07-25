@@ -1,0 +1,112 @@
+{{!< default}}
+
+<header class="site-home-header">
+    {{> site-nav}}
+    <div class="site-header-content">
+        <h1 class="site-title">
+            {{#if @site.icon}}
+                <img class="site-logo" src="{{@site.icon}}" alt="{{@site.title}}" />
+            {{else}}
+                {{@site.title}}
+            {{/if}}
+        </h1>
+        <h2 class="site-description">Table Roller</h2>
+    </div>
+</header>
+
+<main id="site-main" class="site-main outer">
+    <div class="inner posts">
+        <div class="post-feed">
+            {{#get "posts" filter="tag:table" as |tables|}}
+                {{#if tables}}
+                    <div class="table-list">
+                        <h3>Available Tables</h3>
+                        <ul>
+                            {{#foreach tables}}
+                                <li>
+                                    <a href="{{url}}">{{title}}</a>
+                                </li>
+                            {{/foreach}}
+                        </ul>
+                    </div>
+                {{else}}
+                    <div class="no-tables">
+                        <p>No tables found. Create posts with the tag "table" to see them here.</p>
+                    </div>
+                {{/if}}
+            {{/get}}
+        </div>
+    </div>
+</main>
+
+<style>
+    #dice-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        z-index: 9999;
+        pointer-events: none; /* Click-through */
+        background: transparent;
+    }
+    
+    .table-list {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .table-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .table-list li {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 5px;
+        background-color: #f5f5f5;
+        transition: all 0.3s ease;
+    }
+    
+    .table-list li:hover {
+        background-color: #e0e0e0;
+        transform: translateY(-2px);
+    }
+    
+    .table-list a {
+        display: block;
+        color: var(--color-darkgrey);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .no-tables {
+        text-align: center;
+        padding: 3rem;
+        color: var(--color-midgrey);
+    }
+</style>
+
+<script>
+    function showDiceRoll(roll = "1d20", duration = 5000) {
+        const iframe = document.createElement("iframe");
+        iframe.id = "dice-overlay";
+        iframe.src = `https://dice.bee.ac/?chromahex=00000000&roll&noresult&labelhex=ffffff&dicehex=ff2600&d=${encodeURIComponent(roll)}`;
+
+        document.body.appendChild(iframe);
+
+        setTimeout(() => {
+            iframe.remove();
+        }, duration); // remove after roll animation completes
+    }
+
+    // Trigger when page loads
+    window.addEventListener("load", () => {
+        showDiceRoll("1d20");
+    });
+</script>
+
