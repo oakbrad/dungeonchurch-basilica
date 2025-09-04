@@ -8,11 +8,12 @@
 <script src="{{asset "js/libs/teal.js"}}"></script>
 <script src="{{asset "js/dice.js"}}"></script>
 <script src="{{asset "js/rolltable.js"}}"></script>
+
+{{!-- 3D Dice Container (hidden by default, positioned over entire viewport) --}}
+<div id="dice-container" class="dice-container"></div>
+
 {{!-- Table Roller UI --}}
 <div class="table-roller-container gh-canvas" {{#if contentSelector}}data-content-selector="{{contentSelector}}"{{/if}}>
-    {{!-- 3D Dice Container (hidden by default) --}}
-    <div id="dice-container" class="dice-container"></div>
-    
     <button class="table-roller-button">
         <span class="d20-icon">{{> "icons/d20"}}</span>
         {{#if buttonText}}{{buttonText}}{{else}}Roll on Table{{/if}}

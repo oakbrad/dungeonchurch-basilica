@@ -3,42 +3,44 @@ document.addEventListener('DOMContentLoaded', function() {
     // Find all table roller containers on the page
     const tableRollerContainers = document.querySelectorAll('.table-roller-container');
     
+    // Get the dice container (now outside the table roller container)
+    const diceContainer = document.getElementById('dice-container');
+    
+    // Initialize the 3D dice box
+    let diceBox = null;
+    
+    // Check if the browser supports WebGL
+    const supportsWebGL = (function() {
+        try {
+            const canvas = document.createElement('canvas');
+            return !!(window.WebGLRenderingContext && 
+                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+        } catch(e) {
+            return false;
+        }
+    })();
+    
+    // Only initialize the dice box if WebGL is supported
+    if (supportsWebGL && diceContainer) {
+        try {
+            diceBox = new DICE.dice_box(diceContainer);
+        } catch (e) {
+            console.error('Failed to initialize 3D dice:', e);
+            diceBox = null;
+        }
+    }
+    
     // Initialize each table roller
     tableRollerContainers.forEach(function(container, index) {
         const tableRollerButton = container.querySelector('.table-roller-button');
         const tableRollerResult = container.querySelector('.table-roller-result');
         const tableRollerIcon = container.querySelector('.d20-icon');
-        const diceContainer = container.querySelector('.dice-container');
         
         // Find the associated content section for this roller
         // If there's a data-content-selector attribute, use that to find the content
         // Otherwise, use the default selector
         const contentSelector = container.getAttribute('data-content-selector') || '.gh-content';
         const contentSection = document.querySelector(contentSelector);
-        
-        // Initialize the 3D dice box
-        let diceBox = null;
-        
-        // Check if the browser supports WebGL
-        const supportsWebGL = (function() {
-            try {
-                const canvas = document.createElement('canvas');
-                return !!(window.WebGLRenderingContext && 
-                    (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-            } catch(e) {
-                return false;
-            }
-        })();
-        
-        // Only initialize the dice box if WebGL is supported
-        if (supportsWebGL && diceContainer) {
-            try {
-                diceBox = new DICE.dice_box(diceContainer);
-            } catch (e) {
-                console.error('Failed to initialize 3D dice:', e);
-                diceBox = null;
-            }
-        }
         
         if (tableRollerButton && tableRollerResult && contentSection) {
             tableRollerButton.addEventListener('click', function() {
@@ -233,4 +235,3 @@ document.addEventListener('DOMContentLoaded', function() {
         return ((result - 1) % tableSize);
     }
 });
-
