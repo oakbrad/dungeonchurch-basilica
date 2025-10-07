@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
         livestreamContainer.id = 'livestream-container';
         livestreamContainer.innerHTML = `
             <div class="inner">
-                <iframe src="https://live.dungeon.church/57f8d0b3-3324-4467-bacb-ffc6f7f2ed40.html" 
-                        width="640" height="360" 
+                <iframe src="https://live.dungeon.church/9427a5bf-a270-4cec-9bf5-6e873a79269e.html" 
+                        width="100%"
                         frameborder="no" 
                         scrolling="no" 
                         allowfullscreen="true">
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to check stream status
     function checkStreamStatus() {
-        return fetch('https://live.dungeon.church/memfs/57f8d0b3-3324-4467-bacb-ffc6f7f2ed40.m3u8', {
+        return fetch('https://live.dungeon.church/memfs/9427a5bf-a270-4cec-9bf5-6e873a79269e.m3u8', {
             method: 'HEAD',  // Use HEAD request to avoid downloading the entire file
             cache: 'no-store',  // Avoid caching to get fresh status
             mode: 'cors'  // Handle CORS if needed
