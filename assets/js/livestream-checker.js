@@ -1,29 +1,5 @@
 // Livestream checker for conditionally displaying livestream content
 document.addEventListener('DOMContentLoaded', function() {
-    // Create livestream container if it doesn't exist
-    let livestreamContainer = document.getElementById('livestream-container');
-    if (!livestreamContainer) {
-        livestreamContainer = document.createElement('div');
-        livestreamContainer.id = 'livestream-container';
-        livestreamContainer.innerHTML = `
-            <div class="inner">
-                <iframe src="https://live.dungeon.church/9427a5bf-a270-4cec-9bf5-6e873a79269e.html" 
-                        width="100%"
-                        frameborder="no" 
-                        scrolling="no" 
-                        allowfullscreen="true">
-                </iframe>
-            </div>
-        `;
-        livestreamContainer.style.display = 'none';
-        
-        // Insert after header but before main content
-        const siteMain = document.getElementById('site-main');
-        if (siteMain) {
-            siteMain.parentNode.insertBefore(livestreamContainer, siteMain);
-        }
-    }
-
     // Function to check stream status
     function checkStreamStatus() {
         return fetch('https://live.dungeon.church/memfs/9427a5bf-a270-4cec-9bf5-6e873a79269e.m3u8', {
@@ -42,54 +18,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update the display based on stream status
     function updateStreamDisplay(isStreamActive) {
         const coverContainer = document.querySelector('.site-header-content');
+        if (!coverContainer) return;
+
+        // Get or create livestream iframe
+        let livestreamIframe = document.getElementById('livestream-iframe');
+        if (!livestreamIframe && isStreamActive) {
+            livestreamIframe = document.createElement('iframe');
+            livestreamIframe.id = 'livestream-iframe';
+            livestreamIframe.src = 'https://live.dungeon.church/9427a5bf-a270-4cec-9bf5-6e873a79269e.html';
+            livestreamIframe.setAttribute('frameborder', 'no');
+            livestreamIframe.setAttribute('scrolling', 'no');
+            livestreamIframe.setAttribute('allowfullscreen', 'true');
+            livestreamIframe.classList.add('site-header-cover', 'livestream-active');
+        }
+
+        // Get the cover image
+        const coverImage = coverContainer.querySelector('img.site-header-cover');
         
         if (isStreamActive) {
-            // Show livestream
-            livestreamContainer.style.display = 'block';
-            
-            // Modify header if needed
-            if (coverContainer) {
-                // Keep the header but hide the cover image
-                const coverImage = coverContainer.querySelector('.site-header-cover');
-                if (coverImage) {
+            // If we have a cover image, replace it with the livestream
+            if (coverImage && livestreamIframe) {
+                // If the iframe isn't already in the DOM, insert it
+                if (!document.getElementById('livestream-iframe')) {
                     coverImage.style.display = 'none';
+                    coverContainer.insertBefore(livestreamIframe, coverImage);
                 }
             }
         } else {
-            // Hide livestream
-            livestreamContainer.style.display = 'none';
+            // Stream is not active, show the cover image and remove the iframe
+            if (coverImage) {
+                coverImage.style.display = '';
+            }
             
-            // Restore header
-            if (coverContainer) {
-                const coverImage = coverContainer.querySelector('.site-header-cover');
-                if (coverImage) {
-                    coverImage.style.display = '';
-                }
+            // Remove the iframe if it exists
+            if (livestreamIframe && livestreamIframe.parentNode) {
+                livestreamIframe.parentNode.removeChild(livestreamIframe);
             }
         }
     }
 
-    // Add CSS for the livestream container
+    // Add CSS for the livestream iframe
     const style = document.createElement('style');
     style.textContent = `
-        #livestream-container {
-            margin: 0 auto;
-            padding: 2vw 0;
-            text-align: center;
-            background-color: #000;
+        iframe.site-header-cover.livestream-active {
+            width: 100%;
+            height: 100%;
+            min-height: 40vh;
+            object-fit: cover;
+            margin: 0;
+            padding: 0;
+            display: block;
         }
-        #livestream-container .inner {
-            max-width: 1040px;
-            margin: 0 auto;
-        }
-        #livestream-container iframe {
-            max-width: 100%;
-            height: auto;
-            aspect-ratio: 16/9;
-        }
+        
         @media (max-width: 650px) {
-            #livestream-container {
-                padding: 4vw 0;
+            iframe.site-header-cover.livestream-active {
+                min-height: 30vh;
             }
         }
     `;
