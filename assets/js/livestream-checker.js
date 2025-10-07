@@ -73,10 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!livestreamBanner) {
                 livestreamBanner = createLivestreamBanner();
                 
-                // Insert the banner between the header and site-main
-                const siteMain = document.getElementById('site-main');
-                if (siteMain) {
-                    siteMain.parentNode.insertBefore(livestreamBanner, siteMain);
+                // Insert the banner immediately after the site-header-content
+                if (coverContainer.nextSibling) {
+                    coverContainer.parentNode.insertBefore(livestreamBanner, coverContainer.nextSibling);
+                } else {
+                    coverContainer.parentNode.appendChild(livestreamBanner);
                 }
             }
         } else {
@@ -124,8 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
             margin: 0;
             padding: 0;
             width: 100%;
-            position: relative;
-            z-index: 100;
+            display: block;
+            clear: both;
         }
         
         #livestream-banner .inner {
