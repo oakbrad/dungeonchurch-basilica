@@ -19,9 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function createLivestreamBanner() {
         const banner = document.createElement('div');
         banner.id = 'livestream-banner';
-        banner.innerHTML = `<p>LIVE on <a href="https://twitch.tv/dungeon_church" target="_blank">Twitch</a> / 
-                <a href="https://youtube.com/@dungeon_church" target="_blank">YouTube</a> / 
-                <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a></p>`;
+        banner.className = 'outer'; // Add outer class for full width
+        banner.innerHTML = `<div class="inner">
+            <p>LIVE on <a href="https://twitch.tv/dungeon_church" target="_blank">Twitch</a> / 
+            <a href="https://youtube.com/@dungeon_church" target="_blank">YouTube</a> / 
+            <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a></p>
+        </div>`;
         return banner;
     }
 
@@ -70,13 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!livestreamBanner) {
                 livestreamBanner = createLivestreamBanner();
                 
-                // Insert the banner at the top of site-main, before the inner posts div
+                // Insert the banner between the header and site-main
                 const siteMain = document.getElementById('site-main');
                 if (siteMain) {
-                    const innerPosts = siteMain.querySelector('.inner.posts');
-                    if (innerPosts) {
-                        siteMain.insertBefore(livestreamBanner, innerPosts);
-                    }
+                    siteMain.parentNode.insertBefore(livestreamBanner, siteMain);
                 }
             }
         } else {
@@ -119,13 +119,20 @@ document.addEventListener('DOMContentLoaded', function() {
             background-color: var(--ghost-accent-color, #e50914);
             color: white;
             text-align: center;
-            padding: 0;
             font-weight: bold;
             font-size: 1.2rem;
-            margin: 0 0 2vw 0;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            position: relative;
+            z-index: 100;
+        }
+        
+        #livestream-banner .inner {
             height: 50px;
             line-height: 50px;
-            width: 100%;
+            max-width: 1040px;
+            margin: 0 auto;
         }
         
         #livestream-banner p {
@@ -149,6 +156,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             #livestream-banner {
                 font-size: 1rem;
+            }
+            
+            #livestream-banner .inner {
                 height: 40px;
                 line-height: 40px;
             }
