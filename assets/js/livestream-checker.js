@@ -19,13 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function createLivestreamBanner() {
         const banner = document.createElement('div');
         banner.id = 'livestream-banner';
-        banner.innerHTML = `
-            <div class="inner">
-                <p>LIVE on <a href="https://twitch.tv/dungeon_church" target="_blank">Twitch</a> / 
+        banner.innerHTML = `<p>LIVE on <a href="https://twitch.tv/dungeon_church" target="_blank">Twitch</a> / 
                 <a href="https://youtube.com/@dungeon_church" target="_blank">YouTube</a> / 
-                <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a></p>
-            </div>
-        `;
+                <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a></p>`;
         return banner;
     }
 
@@ -54,15 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Get or create the livestream banner
         let livestreamBanner = document.getElementById('livestream-banner');
-        if (!livestreamBanner && isStreamActive) {
-            livestreamBanner = createLivestreamBanner();
-            
-            // Insert the banner between the header and main content
-            const siteMain = document.getElementById('site-main');
-            if (siteMain) {
-                siteMain.parentNode.insertBefore(livestreamBanner, siteMain);
-            }
-        }
         
         if (isStreamActive) {
             // If we have a cover image, replace it with the livestream
@@ -79,9 +66,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 headerInner.style.display = 'none';
             }
             
-            // Show the livestream banner
-            if (livestreamBanner) {
-                livestreamBanner.style.display = 'block';
+            // Add the livestream banner if it doesn't exist
+            if (!livestreamBanner) {
+                livestreamBanner = createLivestreamBanner();
+                
+                // Insert the banner at the top of site-main, before the inner posts div
+                const siteMain = document.getElementById('site-main');
+                if (siteMain) {
+                    const innerPosts = siteMain.querySelector('.inner.posts');
+                    if (innerPosts) {
+                        siteMain.insertBefore(livestreamBanner, innerPosts);
+                    }
+                }
             }
         } else {
             // Stream is not active, show the cover image and remove the iframe
@@ -123,15 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
             background-color: var(--ghost-accent-color, #e50914);
             color: white;
             text-align: center;
-            padding: 0.5rem 0;
+            padding: 0;
             font-weight: bold;
             font-size: 1.2rem;
-            margin: 0;
-        }
-        
-        #livestream-banner .inner {
-            max-width: 1040px;
-            margin: 0 auto;
+            margin: 0 0 2vw 0;
+            height: 50px;
+            line-height: 50px;
+            width: 100%;
         }
         
         #livestream-banner p {
@@ -155,7 +149,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             #livestream-banner {
                 font-size: 1rem;
-                padding: 0.4rem 0;
+                height: 40px;
+                line-height: 40px;
             }
         }
     `;
