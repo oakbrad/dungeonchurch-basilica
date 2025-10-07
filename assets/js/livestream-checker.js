@@ -80,11 +80,52 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!bannerWrapper) {
                 bannerWrapper = createLivestreamBanner();
                 
-                // Insert the banner between the header and site-main
-                const siteMain = document.getElementById('site-main');
-                if (siteMain) {
-                    siteMain.parentNode.insertBefore(bannerWrapper, siteMain);
+                // Create a MutationObserver to ensure the banner is always after the site-content
+                const observer = new MutationObserver(function(mutations) {
+                    positionBanner();
+                });
+                
+                // Function to position the banner correctly
+                function positionBanner() {
+                    const siteContent = document.querySelector('.site-content');
+                    if (siteContent && bannerWrapper.parentNode) {
+                        // Remove the banner from its current position
+                        bannerWrapper.parentNode.removeChild(bannerWrapper);
+                        
+                        // Insert it after the site-content
+                        if (siteContent.nextSibling) {
+                            siteContent.parentNode.insertBefore(bannerWrapper, siteContent.nextSibling);
+                        } else {
+                            siteContent.parentNode.appendChild(bannerWrapper);
+                        }
+                    }
                 }
+                
+                // Initial positioning
+                const siteContent = document.querySelector('.site-content');
+                if (siteContent) {
+                    if (siteContent.nextSibling) {
+                        siteContent.parentNode.insertBefore(bannerWrapper, siteContent.nextSibling);
+                    } else {
+                        siteContent.parentNode.appendChild(bannerWrapper);
+                    }
+                    
+                    // Start observing the site-content for changes
+                    observer.observe(siteContent, { 
+                        attributes: true, 
+                        childList: true, 
+                        subtree: true 
+                    });
+                } else {
+                    // Fallback if site-content not found
+                    const siteMain = document.getElementById('site-main');
+                    if (siteMain) {
+                        siteMain.parentNode.insertBefore(bannerWrapper, siteMain);
+                    }
+                }
+                
+                // Also reposition on window resize
+                window.addEventListener('resize', positionBanner);
             }
         } else {
             // Stream is not active, show the cover image and remove the iframe
@@ -127,6 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
             background-color: var(--ghost-accent-color, #e50914);
             margin: 0;
             padding: 0;
+            position: relative;
+            z-index: 90;
         }
         
         #livestream-banner {
