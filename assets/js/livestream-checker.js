@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
         banner.innerHTML = `<div class="inner">
             <p>LIVE on <a href="https://twitch.tv/dungeon_church" target="_blank">Twitch</a> / 
             <a href="https://youtube.com/@dungeon_church" target="_blank">YouTube</a> / 
-            <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a></p>
+            <a href="https://streamplace.live/dungeon_church" target="_blank">StreamPlace</a> / 
+            <a href="https://live.dungeon.church/9427a5bf-a270-4cec-9bf5-6e873a79269e.html" target="_blank">Web</a></p>
         </div>`;
         return banner;
     }
@@ -73,11 +74,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!livestreamBanner) {
                 livestreamBanner = createLivestreamBanner();
                 
-                // Insert the banner immediately after the site-header-content
-                if (coverContainer.nextSibling) {
-                    coverContainer.parentNode.insertBefore(livestreamBanner, coverContainer.nextSibling);
-                } else {
-                    coverContainer.parentNode.appendChild(livestreamBanner);
+                // Insert the banner at the beginning of site-main, before any other content
+                const siteMain = document.getElementById('site-main');
+                if (siteMain) {
+                    const firstChild = siteMain.firstChild;
+                    if (firstChild) {
+                        siteMain.insertBefore(livestreamBanner, firstChild);
+                    } else {
+                        siteMain.appendChild(livestreamBanner);
+                    }
                 }
             }
         } else {
@@ -122,11 +127,10 @@ document.addEventListener('DOMContentLoaded', function() {
             text-align: center;
             font-weight: bold;
             font-size: 1.2rem;
-            margin: 0;
+            margin: 0 0 2vw 0;
             padding: 0;
             width: 100%;
             display: block;
-            clear: both;
         }
         
         #livestream-banner .inner {
