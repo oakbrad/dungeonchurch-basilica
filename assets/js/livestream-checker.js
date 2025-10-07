@@ -80,52 +80,41 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!bannerWrapper) {
                 bannerWrapper = createLivestreamBanner();
                 
-                // Create a MutationObserver to ensure the banner is always after the site-content
-                const observer = new MutationObserver(function(mutations) {
-                    positionBanner();
-                });
-                
-                // Function to position the banner correctly
-                function positionBanner() {
-                    const siteContent = document.querySelector('.site-content');
-                    if (siteContent && bannerWrapper.parentNode) {
-                        // Remove the banner from its current position
-                        bannerWrapper.parentNode.removeChild(bannerWrapper);
-                        
-                        // Insert it after the site-content
-                        if (siteContent.nextSibling) {
-                            siteContent.parentNode.insertBefore(bannerWrapper, siteContent.nextSibling);
+                // Position the banner at the top of the posts, right after the header
+                const siteMain = document.getElementById('site-main');
+                if (siteMain) {
+                    // Find the inner posts container
+                    const innerPostsContainer = siteMain.querySelector('.inner.posts');
+                    
+                    if (innerPostsContainer) {
+                        // Insert before the first child of the inner posts container
+                        if (innerPostsContainer.firstChild) {
+                            innerPostsContainer.insertBefore(bannerWrapper, innerPostsContainer.firstChild);
                         } else {
-                            siteContent.parentNode.appendChild(bannerWrapper);
+                            innerPostsContainer.appendChild(bannerWrapper);
+                        }
+                    } else {
+                        // Fallback: insert at the beginning of site-main
+                        if (siteMain.firstChild) {
+                            siteMain.insertBefore(bannerWrapper, siteMain.firstChild);
+                        } else {
+                            siteMain.appendChild(bannerWrapper);
                         }
                     }
-                }
-                
-                // Initial positioning
-                const siteContent = document.querySelector('.site-content');
-                if (siteContent) {
-                    if (siteContent.nextSibling) {
-                        siteContent.parentNode.insertBefore(bannerWrapper, siteContent.nextSibling);
-                    } else {
-                        siteContent.parentNode.appendChild(bannerWrapper);
-                    }
                     
-                    // Start observing the site-content for changes
-                    observer.observe(siteContent, { 
-                        attributes: true, 
-                        childList: true, 
-                        subtree: true 
+                    // Add a resize event listener to ensure proper positioning
+                    window.addEventListener('resize', function() {
+                        if (bannerWrapper.parentNode) {
+                            // Reposition if needed
+                            const currentParent = bannerWrapper.parentNode;
+                            if (currentParent === innerPostsContainer && innerPostsContainer.firstChild !== bannerWrapper) {
+                                currentParent.insertBefore(bannerWrapper, innerPostsContainer.firstChild);
+                            } else if (currentParent === siteMain && siteMain.firstChild !== bannerWrapper) {
+                                currentParent.insertBefore(bannerWrapper, siteMain.firstChild);
+                            }
+                        }
                     });
-                } else {
-                    // Fallback if site-content not found
-                    const siteMain = document.getElementById('site-main');
-                    if (siteMain) {
-                        siteMain.parentNode.insertBefore(bannerWrapper, siteMain);
-                    }
                 }
-                
-                // Also reposition on window resize
-                window.addEventListener('resize', positionBanner);
             }
         } else {
             // Stream is not active, show the cover image and remove the iframe
@@ -166,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         #livestream-banner-wrapper {
             width: 100%;
             background-color: var(--ghost-accent-color, #e50914);
-            margin: 0;
+            margin: 0 0 2vw 0;
             padding: 0;
             position: relative;
             z-index: 90;
