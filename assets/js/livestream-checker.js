@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const coverContainer = document.querySelector('.site-header-content');
         if (!coverContainer) return;
 
+        // Get the site-header-inner element (floating text)
+        const headerInner = coverContainer.querySelector('.site-header-inner');
+
         // Get or create livestream iframe
         let livestreamIframe = document.getElementById('livestream-iframe');
         if (!livestreamIframe && isStreamActive) {
@@ -44,6 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     coverContainer.insertBefore(livestreamIframe, coverImage);
                 }
             }
+            
+            // Hide the site-header-inner (floating text)
+            if (headerInner) {
+                headerInner.style.display = 'none';
+            }
         } else {
             // Stream is not active, show the cover image and remove the iframe
             if (coverImage) {
@@ -53,6 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove the iframe if it exists
             if (livestreamIframe && livestreamIframe.parentNode) {
                 livestreamIframe.parentNode.removeChild(livestreamIframe);
+            }
+            
+            // Show the site-header-inner (floating text)
+            if (headerInner) {
+                headerInner.style.display = '';
             }
         }
     }
@@ -81,9 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial check
     checkStreamStatus().then(updateStreamDisplay);
     
-    // Set up periodic checks every 30 seconds
+    // Set up periodic checks every 10 seconds (changed from 30 seconds)
     setInterval(() => {
         checkStreamStatus().then(updateStreamDisplay);
-    }, 30000);
+    }, 10000);
 });
 
