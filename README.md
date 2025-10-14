@@ -19,4 +19,10 @@ This theme contains custom templates & partials for RPG related content:
 * `custom-timeline.hbs` - Create [TimelineJS3](https://github.com/NUKnightLab/TimelineJS3) timelines with a linked Google Sheet.
 * `custom-table.hbs` - Creates an interactive dice roller for Markdown tables. See [readme](/README-table-roller.md)
 
+## Custom Navigation
+This theme includes custom navigation partials that modify the default Ghost navigation:
+* `custom-navigation.hbs` - Provides membership-based access control for navigation items:
+  * For "Lore Wiki" links: Members see direct links to lore.dungeon.church, while non-members see a locked version (🔒) linking to dungeon.church/pyora-wiki
+  * All other navigation items work exactly as configured in the Ghost admin panel
+
 #### [Casper Readme](README-casper.md)

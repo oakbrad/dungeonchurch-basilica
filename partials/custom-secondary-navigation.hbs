@@ -1,0 +1,13 @@
+{{!-- Custom secondary navigation partial with membership-based logic for "Lore Wiki" link --}}
+{{#foreach @site.secondary_navigation}}
+    {{#if (eq label "Lore Wiki")}}
+        {{#if @member}}
+            <a href="https://lore.dungeon.church">Lore Wiki</a>
+        {{else}}
+            <a href="https://dungeon.church/pyora-wiki">🔒 Lore Wiki</a>
+        {{/if}}
+    {{else}}
+        <a href="{{url}}">{{label}}</a>
+    {{/if}}
+{{/foreach}}
+
