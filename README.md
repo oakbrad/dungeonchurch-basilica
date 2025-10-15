@@ -20,8 +20,8 @@ This theme contains custom templates & partials for RPG related content:
 * `custom-table.hbs` - Creates an interactive dice roller for Markdown tables. See [readme](/README-table-roller.md)
 
 ## Custom Navigation
-This theme includes custom navigation partials that modify the default Ghost navigation:
-* `custom-navigation.hbs` - Provides membership-based access control for navigation items:
+This theme includes a custom navigation partial that modifies the default Ghost navigation:
+* `partials/navigation.hbs` - Provides membership-based access control for navigation items:
   * For "Lore Wiki" links: Members see direct links to lore.dungeon.church, while non-members see a locked version (🔒) linking to dungeon.church/pyora-wiki
   * All other navigation items work exactly as configured in the Ghost admin panel
 

@@ -1,0 +1,35 @@
+{{!-- Custom navigation partial with membership-based logic for "Lore Wiki" link --}}
+{{#if isSecondary}}
+    {{!-- Secondary navigation (footer) --}}
+    {{#foreach navigation}}
+        {{#if label}}
+            {{#has label="Lore Wiki"}}
+                {{#if @member}}
+                    <a href="https://lore.dungeon.church">Lore Wiki</a>
+                {{else}}
+                    <a href="https://dungeon.church/pyora-wiki">🔒 Lore Wiki</a>
+                {{/if}}
+            {{else}}
+                <a href="{{url}}">{{label}}</a>
+            {{/has}}
+        {{/if}}
+    {{/foreach}}
+{{else}}
+    {{!-- Primary navigation (header) --}}
+    <ul class="nav">
+        {{#foreach navigation}}
+            <li class="nav-{{slug}}{{#if current}} nav-current{{/if}}">
+                {{#has label="Lore Wiki"}}
+                    {{#if @member}}
+                        <a href="https://lore.dungeon.church">Lore Wiki</a>
+                    {{else}}
+                        <a href="https://dungeon.church/pyora-wiki">🔒 Lore Wiki</a>
+                    {{/if}}
+                {{else}}
+                    <a href="{{url}}">{{label}}</a>
+                {{/has}}
+            </li>
+        {{/foreach}}
+    </ul>
+{{/if}}
+
