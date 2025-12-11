@@ -1,0 +1,53 @@
+{{!-- Content Access Control Partial --}}
+{{!-- 
+    This partial handles access control for premium content based on visibility settings.
+    
+    Parameters:
+    - contentType: The type of content (e.g., "map", "timeline", "table")
+    - contentPartial: The name of the partial to include when access is granted
+--}}
+
+{{#has visibility="public"}}
+    {{!-- For public posts, render the content for everyone --}}
+    {{> contentPartial}}
+{{else}}
+    {{!-- For members-only posts, check if user is a member --}}
+    {{#has visibility="members"}}
+        {{#if @member}}
+            {{> contentPartial}}
+        {{else}}
+            <div class="content-access-message">
+                <h1>This {{contentType}} is available to Members</h1>
+                <p>Sign up or log in to view this {{contentType}}.</p>
+                <div class="content-access-cta">
+                    <a href="#/portal/signup" class="content-signup-button">Sign up now</a>
+                    <a href="#/portal/signin" class="content-signin-button">Log in</a>
+                </div>
+            </div>
+        {{/if}}
+    {{else}}
+        {{!-- For paid-members-only posts, check if user is a paid member --}}
+        {{#has visibility="paid"}}
+            {{#if @member.paid}}
+                {{> contentPartial}}
+            {{else}}
+                <div class="content-access-message">
+                    <h1>This {{contentType}} is available to Supporters</h1>
+                    <p>Upgrade your membership to view this {{contentType}}.</p>
+                    <div class="content-access-cta">
+                        {{#if @member}}
+                            <a href="#/portal/account/plans" class="content-upgrade-button">Upgrade now</a>
+                        {{else}}
+                            <a href="#/portal/signup" class="content-signup-button">Sign up now</a>
+                            <a href="#/portal/signin" class="content-signin-button">Log in</a>
+                        {{/if}}
+                    </div>
+                </div>
+            {{/if}}
+        {{else}}
+            {{!-- Default case, just show the content --}}
+            {{> contentPartial}}
+        {{/has}}
+    {{/has}}
+{{/has}}
+

@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{asset "embed.css"}}">
 <script src="{{asset "embed.js"}}"></script>
 
+<link rel="stylesheet" href="{{asset "css/access-controls.css"}}">
 <style>
     /* Remove site footer and content */
     .site-footer,
@@ -21,88 +22,10 @@
         z-index: 1;
     }
 
-    /* Styling for access message */
-    .map-access-message {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: calc(100vh - 88px);
-        text-align: center;
-        padding: 2rem;
-        background: linear-gradient(to bottom right, #3f3f3f, var(--color-darkmode));
-        color: #fff;
-    }
-
-    .map-access-message h1 {
-        margin-bottom: 1rem;
-        color: #fff;
-    }
-
-    .map-access-message p {
-        font-size: 2rem;
-        margin-bottom: 2rem;
-        max-width: 600px;
-    }
-
-    .map-access-cta {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .map-signup-button,
-    .map-signin-button,
-    .map-upgrade-button {
-        display: inline-block;
-        padding: 0.8rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .map-signup-button,
-    .map-upgrade-button {
-        background-color: var(--ghost-accent-color);
-        color: #fff;
-    }
-
-    .map-signin-button {
-        background-color: transparent;
-        border: 1px solid #fff;
-        color: #fff;
-    }
-
-    .map-signup-button:hover,
-    .map-upgrade-button:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-    }
-
-    .map-signin-button:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-    }
-
-    /* Mobile adjustments */
+    /* Mobile tooltip adjustments */
     @media only screen and (max-width: 768px) {
-        .map-access-message h2 {
-            font-size: 1.8rem;
-        }
-
-        .map-access-message p {
-            font-size: 1rem;
-        }
-
-        .map-access-cta {
-            flex-direction: column;
-        }
-        
-        /* Mobile tooltip adjustments */
         .leaflet-tooltip {
             width: auto !important;
-
             padding: 6px 10px !important;
             white-space: normal !important;
         }
@@ -130,47 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 {{#post}}
-    {{!-- For public posts, render the map for everyone --}}
-    {{#has visibility="public"}}
-        {{> "map"}}
-    {{else}}
-        {{!-- For members-only posts, check if user is a member --}}
-        {{#has visibility="members"}}
-            {{#if @member}}
-                {{> "map"}}
-            {{else}}
-                    <div class="map-access-message">
-                        <h1>This map is available to Members</h1>
-                        <p>Sign up or log in to view this map.</p>
-                        <div class="map-access-cta">
-                            <a href="#/portal/signup" class="map-signup-button">Sign up now</a>
-                            <a href="#/portal/signin" class="map-signin-button">Log in</a>
-                        </div>
-                    </div>
-            {{/if}}
-        {{else}}
-            {{!-- For paid-members-only posts, check if user is a paid member --}}
-            {{#has visibility="paid"}}
-                {{#if @member.paid}}
-                    {{> "map"}}
-                {{else}}
-                    <div class="map-access-message">
-                        <h1>This map is available to Supporters</h1>
-                        <p>Upgrade your membership to view this map.</p>
-                        <div class="map-access-cta">
-                            {{#if @member}}
-                                <a href="#/portal/account/plans" class="map-upgrade-button">Upgrade now</a>
-                            {{else}}
-                                <a href="#/portal/signup" class="map-signup-button">Sign up now</a>
-                                <a href="#/portal/signin" class="map-signin-button">Log in</a>
-                            {{/if}}
-                        </div>
-                    </div>
-                {{/if}}
-            {{!-- Fallback - just show it --}}
-            {{else}}
-                {{> "map"}}
-            {{/has}}
-        {{/has}}
-    {{/has}}
+    {{!-- Use the content-access partial to handle access control --}}
+    {{#contentFor "contentType"}}map{{/contentFor}}
+    {{#contentFor "contentPartial"}}map{{/contentFor}}
+    {{> "content-access"}}
 {{/post}}
