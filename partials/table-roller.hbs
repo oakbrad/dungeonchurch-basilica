@@ -2,6 +2,12 @@
 {{!-- Include the CSS and JS for the table roller --}}
 <link rel="stylesheet" href="{{asset "css/rolltable.css"}}">
 
+{{!-- 3D Dice libraries --}}
+<script src="{{asset "js/lib/three.min.js"}}"></script>
+<script src="{{asset "js/lib/cannon.min.js"}}"></script>
+<script src="{{asset "js/lib/teal.js"}}"></script>
+<script src="{{asset "js/lib/dice.js"}}"></script>
+
 <script src="{{asset "js/rolltable.js"}}"></script>
 {{!-- Table Roller UI --}}
 <div class="table-roller-container gh-canvas" {{#if contentSelector}}data-content-selector="{{contentSelector}}"{{/if}}>
