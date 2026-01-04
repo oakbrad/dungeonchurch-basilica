@@ -16,60 +16,27 @@ document.addEventListener('DOMContentLoaded', function() {
     backgroundSigil.innerHTML = document.querySelector('.partials-sigil-template').innerHTML;
     document.body.appendChild(backgroundSigil);
     
-    // Create progress indicator
-    const progressIndicator = document.createElement('div');
-    progressIndicator.className = 'table-scroll-progress';
-    document.body.appendChild(progressIndicator);
+    // Progress indicator is now handled by the reading-progress partial
     
     // Variables to track scroll state
-    let lastScrollTop = 0;
-    let scrollDirection = 'down';
     let ticking = false;
     let tableTop = table.getBoundingClientRect().top + window.pageYOffset;
     let tableBottom = tableTop + table.offsetHeight;
     let windowHeight = window.innerHeight;
-    let documentHeight = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.clientHeight,
-        document.documentElement.scrollHeight,
-        document.documentElement.offsetHeight
-    );
-    
+
     // Calculate if the table is long enough to warrant sigil effect
     // We'll consider "long" as more than 2x the viewport height
-    const isLongTable = table.offsetHeight > (windowHeight * 2);
-    
-    // Calculate if the table is long enough for progress indicator
-    // We'll show progress indicator for tables with height > viewport
-    const showProgressIndicator = table.offsetHeight > windowHeight;
+    let isLongTable = table.offsetHeight > (windowHeight * 2);
     
     // Function to handle scroll effects
     function handleScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Determine scroll direction
-        scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-        lastScrollTop = scrollTop;
-        
-        // Calculate scroll position relative to table
-        const scrollPosition = scrollTop + windowHeight;
-        const tableVisibleStart = Math.max(0, scrollTop - tableTop);
-        const tableVisibleEnd = Math.min(table.offsetHeight, scrollPosition - tableTop);
-        
+
         // Calculate scroll percentage through the table
-        const tableScrollPercentage = Math.min(100, Math.max(0, 
+        const tableScrollPercentage = Math.min(100, Math.max(0,
             ((scrollTop - tableTop) / (tableBottom - tableTop - windowHeight)) * 100
         ));
-        
-        // Update progress indicator for tables with height > viewport
-        // Only show when table is in view
-        if (showProgressIndicator && scrollTop < tableBottom && scrollTop + windowHeight > tableTop) {
-            progressIndicator.style.width = `${tableScrollPercentage}%`;
-        } else {
-            progressIndicator.style.width = '0%';
-        }
-        
+
         // Only show sigil effect if the table is long enough
         if (isLongTable) {
             // Show background sigil when scrolled past first viewport of table
@@ -102,17 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         windowHeight = window.innerHeight;
         tableTop = table.getBoundingClientRect().top + window.pageYOffset;
         tableBottom = tableTop + table.offsetHeight;
-        documentHeight = Math.max(
-            document.body.scrollHeight,
-            document.body.offsetHeight,
-            document.documentElement.clientHeight,
-            document.documentElement.scrollHeight,
-            document.documentElement.offsetHeight
-        );
-        
-        // Recalculate if the table is long enough for effects
         isLongTable = table.offsetHeight > (windowHeight * 2);
-        showProgressIndicator = table.offsetHeight > windowHeight;
     });
     
     // Initial call to set up the state

@@ -1,0 +1,80 @@
+{{!-- Reading Progress Bar Partial --}}
+{{!-- A scroll progress indicator that shows reading progress through the page --}}
+
+<style>
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background-color: var(--ghost-accent-color);
+    width: 0%;
+    z-index: 100;
+    transition: width 0.1s ease;
+}
+</style>
+
+<div class="reading-progress"></div>
+
+<script>
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBar = document.querySelector('.reading-progress');
+        if (!progressBar) return;
+
+        // Find the main content area
+        const article = document.querySelector('.article') || document.querySelector('main');
+        if (!article) return;
+
+        let ticking = false;
+        let showProgressBar = false;
+
+        function checkIfShouldShow() {
+            const articleHeight = article.offsetHeight;
+            const windowHeight = window.innerHeight;
+            // Only show progress bar if content is at least 1.5x the viewport height
+            showProgressBar = articleHeight > (windowHeight * 1.5);
+            progressBar.style.display = showProgressBar ? 'block' : 'none';
+        }
+
+        function updateProgress() {
+            if (!showProgressBar) {
+                ticking = false;
+                return;
+            }
+
+            const articleRect = article.getBoundingClientRect();
+            const articleTop = articleRect.top + window.pageYOffset;
+            const articleHeight = article.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const scrollTop = window.pageYOffset;
+
+            // Calculate how much of the article has been scrolled through
+            const scrollableHeight = articleHeight - windowHeight;
+            const scrolledPast = scrollTop - articleTop;
+
+            // Calculate percentage (0 to 100)
+            let percentage = 0;
+            if (scrollableHeight > 0) {
+                percentage = Math.min(100, Math.max(0, (scrolledPast / scrollableHeight) * 100));
+            }
+
+            progressBar.style.width = percentage + '%';
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(updateProgress);
+                ticking = true;
+            }
+        });
+
+        window.addEventListener('resize', checkIfShouldShow);
+
+        // Initial checks
+        checkIfShouldShow();
+        updateProgress();
+    });
+})();
+</script>
