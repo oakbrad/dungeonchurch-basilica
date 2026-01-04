@@ -1,0 +1,115 @@
+{{!< default}}
+{{#contentFor "title"}}{{post.title}} - Bestiary{{/contentFor}}
+
+{{!-- The tag above means: insert everything in this file
+into the {body} tag of the default.hbs template --}}
+
+{{#post}}
+{{!-- Everything inside the #post block pulls data from the post --}}
+
+<main id="site-main" class="site-main">
+<article class="article {{post_class}} {{#match @custom.post_image_style "Full"}}image-full{{else match @custom.post_image_style "=" "Small"}}image-small{{/match}}">
+
+    <header class="article-header gh-canvas">
+        <h1 class="article-title">{{title}}</h1>
+        {{#if custom_excerpt}}
+            <p class="article-excerpt">{{custom_excerpt}}</p>
+        {{/if}}
+    </header>
+
+    {{!-- Include the CSS and JS for bestiary --}}
+    <link rel="stylesheet" href="{{asset "css/bestiary.css"}}">
+    <link rel="stylesheet" href="{{asset "css/rolltable.css"}}">
+    <script src="{{asset "js/bestiary.js"}}"></script>
+
+    {{!-- Reading progress bar --}}
+    {{> "reading-progress"}}
+
+    <section class="gh-content gh-canvas">
+
+        {{!-- Post content is rendered above the bestiary table --}}
+        <div class="bestiary-post-content">
+            {{content}}
+        </div>
+
+        {{!-- Loading state --}}
+        <div class="bestiary-loading">
+            <p>Loading monsters...</p>
+        </div>
+
+        {{!-- Error state --}}
+        <div class="bestiary-error" style="display: none;">
+            <p>Failed to load monster data. Please try again later.</p>
+        </div>
+
+        {{!-- The bestiary table container --}}
+        <div class="bestiary-table-container" style="display: none;">
+            <table class="bestiary-table">
+                <thead>
+                    <tr>
+                        <th class="token-column"></th>
+                        <th class="sortable" data-sort="name">
+                            Name
+                            <span class="sort-icon"></span>
+                        </th>
+                        <th class="sortable" data-sort="type">
+                            Type
+                            <span class="sort-icon"></span>
+                        </th>
+                        <th class="sortable" data-sort="cr">
+                            CR
+                            <span class="sort-icon"></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{!-- Monster rows will be populated by JavaScript --}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {{#if comments}}
+        <section class="article-comments gh-canvas">
+            {{comments}}
+        </section>
+    {{/if}}
+
+</article>
+</main>
+
+{{!-- A signup call to action is displayed here, unless viewed as a logged-in member --}}
+{{#if @site.members_enabled}}
+{{#unless @member}}
+{{#unless @site.comments_enabled}}
+{{#if access}}
+    <section class="footer-cta outer">
+        <div class="inner">
+           <h2 class="footer-cta-title">Explore Pyora Together</h2>
+            <a class="footer-cta-button" href="#/portal" data-portal>
+                <div class="footer-cta-input">Enter your email</div>
+                <span>Subscribe</span>
+            </a>
+        </div>
+    </section>
+{{/if}}
+{{/unless}}
+{{/unless}}
+{{/if}}
+<br><br><br>
+{{!-- Read more links, just above the footer --}}
+{{#if @custom.show_recent_posts_footer}}
+    {{#get "posts" filter="tag:pyora" limit="3" as |more_posts|}}
+        {{#if more_posts}}
+            <aside class="read-more-wrap outer">
+                <div class="read-more inner">
+                    {{#foreach more_posts}}
+                        {{> "post-card"}}
+                    {{/foreach}}
+                </div>
+            </aside>
+        {{/if}}
+    {{/get}}
+{{/if}}
+
+{{/post}}
