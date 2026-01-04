@@ -554,7 +554,7 @@ const DICE = (function() {
             var context = canvas.getContext("2d");
             var ts = calc_texture_size(size + size * 2 * margin) * 2;
             canvas.width = canvas.height = ts;
-            context.font = ts / (1 + 2 * margin) + "pt Arial";
+            context.font = ts / (1 + 2 * margin) + "pt 'Waning Star', Arial";
             context.fillStyle = back_color;
             context.fillRect(0, 0, canvas.width, canvas.height);
             context.textAlign = "center";
@@ -581,7 +581,7 @@ const DICE = (function() {
             var context = canvas.getContext("2d");
             var ts = calc_texture_size(size + margin) * 2;
             canvas.width = canvas.height = ts;
-            context.font = (ts - margin) * 0.5 + "pt Arial";
+            context.font = (ts - margin) * 0.5 + "pt 'Waning Star', Arial";
             context.fillStyle = back_color;
             context.fillRect(0, 0, canvas.width, canvas.height);
             context.textAlign = "center";
