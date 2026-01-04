@@ -154,5 +154,4 @@ table thead tr th:nth-of-type(1) {
 
 .dice-overlay.active {
     opacity: 1;
-    pointer-events: auto;
 }
