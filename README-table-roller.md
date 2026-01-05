@@ -52,11 +52,25 @@ Include the table roller in any template:
 {{> "table-roller"}}
 ```
 
-With custom options:
+With a 5etools JSON table (self-contained, no content needed):
+
+```handlebars
+{{> "table-roller" tableName="Books of Pyora" buttonText="Roll for a Book"}}
+```
+
+With a markdown table in a custom content area:
 
 ```handlebars
 {{> "table-roller" buttonText="Roll for Encounter" contentSelector=".my-content"}}
 ```
+
+### Partial Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `tableName` | 5etools JSON table name - loads and renders table automatically |
+| `buttonText` | Custom button label (default: "Roll on Table") |
+| `contentSelector` | CSS selector for content with markdown table (default: ".gh-content") |
 
 ## Files
 

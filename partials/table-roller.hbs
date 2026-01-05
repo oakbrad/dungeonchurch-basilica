@@ -1,4 +1,12 @@
 {{!-- Table Roller Partial - Can be included in any template or post --}}
+{{!--
+  Parameters:
+    buttonText     - Custom button label (default: "Roll on Table")
+    contentSelector - CSS selector for content area with markdown table (default: ".gh-content")
+    tableName      - Name of 5etools JSON table to load (e.g., "Books of Pyora")
+                     When set, fetches table from JSON instead of looking for markdown
+--}}
+
 {{!-- Include the CSS and JS for the table roller --}}
 <link rel="stylesheet" href="{{asset "css/rolltable.css"}}">
 
@@ -9,8 +17,11 @@
 <script src="{{asset "js/lib/dice.js"}}"></script>
 
 <script src="{{asset "js/rolltable.js"}}"></script>
+
 {{!-- Table Roller UI --}}
-<div class="table-roller-container gh-canvas" {{#if contentSelector}}data-content-selector="{{contentSelector}}"{{/if}}>
+<div class="table-roller-container gh-canvas"
+    {{#if contentSelector}}data-content-selector="{{contentSelector}}"{{/if}}
+    {{#if tableName}}data-5e-table="{{tableName}}"{{/if}}>
     <button class="table-roller-button">
         <span class="d20-icon">{{> "icons/d20"}}</span>
         {{#if buttonText}}{{buttonText}}{{else}}Roll on Table{{/if}}
@@ -18,5 +29,9 @@
     <div class="table-roller-result">
         &nbsp;
     </div>
+    {{!-- Container for rendered JSON table --}}
+    {{#if tableName}}
+    <div class="table-roller-table-container"></div>
+    {{/if}}
 </div>
 

@@ -147,7 +147,8 @@ async function fetchTableFromJson(tableName) {
 }
 
 // Render a 5etools table as an HTML table element
-function renderJsonTable(rawTable, targetElement) {
+// If insertAfter is true, inserts after targetElement; otherwise appends inside it
+function renderJsonTable(rawTable, targetElement, insertAfter = true) {
     const table = document.createElement('table');
 
     // Create thead with column labels
@@ -179,8 +180,12 @@ function renderJsonTable(rawTable, targetElement) {
 
     table.appendChild(tbody);
 
-    // Insert the table after the target element (the data-5e-table div)
-    targetElement.parentNode.insertBefore(table, targetElement.nextSibling);
+    // Insert or append the table
+    if (insertAfter) {
+        targetElement.parentNode.insertBefore(table, targetElement.nextSibling);
+    } else {
+        targetElement.appendChild(table);
+    }
 
     return table;
 }
@@ -443,43 +448,72 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableRollerButton = container.querySelector('.table-roller-button');
         const tableRollerResult = container.querySelector('.table-roller-result');
         const tableRollerIcon = container.querySelector('.d20-icon');
+        const tableContainer = container.querySelector('.table-roller-table-container');
 
-        const contentSelector = container.getAttribute('data-content-selector') || '.gh-content';
-        const contentSection = document.querySelector(contentSelector);
-
-        if (!tableRollerButton || !tableRollerResult || !contentSection) {
+        if (!tableRollerButton || !tableRollerResult) {
             return;
         }
 
-        // Check for 5etools JSON table reference first
-        const jsonTableElement = contentSection.querySelector('[data-5e-table]');
+        // Check for 5etools JSON table reference
+        // Priority: 1) data-5e-table on container itself (from partial parameter)
+        //           2) data-5e-table element in content section
+        //           3) markdown table in content section
+        const containerTableName = container.getAttribute('data-5e-table');
+        const contentSelector = container.getAttribute('data-content-selector') || '.gh-content';
+        const contentSection = document.querySelector(contentSelector);
+
         let tableData = null;
 
-        if (jsonTableElement) {
-            const tableName = jsonTableElement.getAttribute('data-5e-table');
-
-            // Show loading state
+        if (containerTableName) {
+            // Case 1: Table specified directly on the partial via tableName parameter
             tableRollerResult.textContent = 'Loading table...';
             tableRollerButton.disabled = true;
 
-            // Fetch table data from JSON
-            const result = await fetchTableFromJson(tableName);
+            const result = await fetchTableFromJson(containerTableName);
 
             if (!result || !result.tableData || result.tableData.length === 0) {
-                tableRollerResult.textContent = 'Failed to load table "' + tableName + '"';
+                tableRollerResult.textContent = 'Failed to load table "' + containerTableName + '"';
                 tableRollerButton.disabled = false;
                 return;
             }
 
             tableData = result.tableData;
 
-            // Render the table as HTML in the content area
-            renderJsonTable(result.rawTable, jsonTableElement);
+            // Render the table into the container's table area
+            if (tableContainer) {
+                renderJsonTable(result.rawTable, tableContainer, false);
+            }
 
             tableRollerButton.disabled = false;
-        } else {
-            // Fall back to extracting from markdown table in content
-            tableData = extractTableData(contentSection);
+        } else if (contentSection) {
+            // Check for data-5e-table element in content section
+            const jsonTableElement = contentSection.querySelector('[data-5e-table]');
+
+            if (jsonTableElement) {
+                // Case 2: Table reference in content via hidden div
+                const tableName = jsonTableElement.getAttribute('data-5e-table');
+
+                tableRollerResult.textContent = 'Loading table...';
+                tableRollerButton.disabled = true;
+
+                const result = await fetchTableFromJson(tableName);
+
+                if (!result || !result.tableData || result.tableData.length === 0) {
+                    tableRollerResult.textContent = 'Failed to load table "' + tableName + '"';
+                    tableRollerButton.disabled = false;
+                    return;
+                }
+
+                tableData = result.tableData;
+
+                // Render the table after the reference element
+                renderJsonTable(result.rawTable, jsonTableElement);
+
+                tableRollerButton.disabled = false;
+            } else {
+                // Case 3: Fall back to extracting from markdown table in content
+                tableData = extractTableData(contentSection);
+            }
         }
 
         // Store table data for click handler
