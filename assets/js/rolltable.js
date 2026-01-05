@@ -1,8 +1,8 @@
 // Table roller functionality with 3D dice
 // Supports both markdown tables in post content and 5etools JSON tables
 
-//const HOMEBREW_URL = 'https://5e.dungeon.church/homebrew/Dungeon%20Church;%20Pyora.json';
-const HOMEBREW_URL = '/assets/Dungeon%20Church;%20Pyora.json';
+const HOMEBREW_URL = 'https://5e.dungeon.church/homebrew/Dungeon%20Church;%20Pyora.json';
+//const HOMEBREW_URL = '/assets/Dungeon%20Church;%20Pyora.json';
 let cachedJsonData = null;
 
 // Parse 5etools inline formatting to HTML
