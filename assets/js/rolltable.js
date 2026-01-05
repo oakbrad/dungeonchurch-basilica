@@ -1,4 +1,190 @@
 // Table roller functionality with 3D dice
+// Supports both markdown tables in post content and 5etools JSON tables
+
+//const HOMEBREW_URL = 'https://5e.dungeon.church/homebrew/Dungeon%20Church;%20Pyora.json';
+const HOMEBREW_URL = '/assets/Dungeon%20Church;%20Pyora.json';
+let cachedJsonData = null;
+
+// Parse 5etools inline formatting to HTML
+// Handles nested tags by processing inner tags first, then outer formatting
+function parse5eToolsText(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    let result = text;
+
+    // Process inner tags first (links, items, creatures, etc.) before italic/bold wrappers
+
+    // {@link text|url} -> <a href="url">text</a>
+    result = result.replace(/\{@link ([^|{}]+)\|([^}]+)\}/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // {@item Name|source} -> link to 5e.dungeon.church/items.html
+    result = result.replace(/\{@item ([^|{}]+)\|([^}]+)\}/g, function(match, name, source) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        const encodedSource = source.toLowerCase();
+        return '<a href="https://5e.dungeon.church/items.html#' + encodedName + '_' + encodedSource + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
+    });
+
+    // {@item Name} (without source) -> just the name as link
+    result = result.replace(/\{@item ([^|}{}]+)\}/g, function(match, name) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        return '<a href="https://5e.dungeon.church/items.html#' + encodedName + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
+    });
+
+    // {@creature Name|source} -> link to bestiary
+    result = result.replace(/\{@creature ([^|{}]+)\|([^}]+)\}/g, function(match, name, source) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        const encodedSource = source.toLowerCase();
+        return '<a href="https://5e.dungeon.church/bestiary.html#' + encodedName + '_' + encodedSource + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
+    });
+
+    // {@creature Name} (without source)
+    result = result.replace(/\{@creature ([^|}{}]+)\}/g, function(match, name) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        return '<a href="https://5e.dungeon.church/bestiary.html#' + encodedName + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
+    });
+
+    // {@table Name|source|display} -> link with display text
+    result = result.replace(/\{@table ([^|{}]+)\|([^|{}]+)\|([^}]+)\}/g, function(match, name, source, display) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        const encodedSource = source.toLowerCase();
+        return '<a href="https://5e.dungeon.church/tables.html#' + encodedName + '_' + encodedSource + '" target="_blank" rel="noopener noreferrer">' + display + '</a>';
+    });
+
+    // {@table Name|source} -> link with name as display
+    result = result.replace(/\{@table ([^|{}]+)\|([^}]+)\}/g, function(match, name, source) {
+        const encodedName = encodeURIComponent(name.toLowerCase().replace(/ /g, '_'));
+        const encodedSource = source.toLowerCase();
+        return '<a href="https://5e.dungeon.church/tables.html#' + encodedName + '_' + encodedSource + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
+    });
+
+    // {@race Name|source|display} -> display text only (or could be linked)
+    result = result.replace(/\{@race ([^|{}]+)\|([^|{}]+)\|([^}]+)\}/g, '$3');
+
+    // {@race Name|source} -> name only
+    result = result.replace(/\{@race ([^|{}]+)\|([^}]+)\}/g, '$1');
+
+    // {@dice XdY} -> plain text
+    result = result.replace(/\{@dice ([^}]+)\}/g, '$1');
+
+    // {@atk mw} etc. -> plain text descriptors
+    result = result.replace(/\{@atk ([^}]+)\}/g, '');
+
+    // {@hit X} -> +X
+    result = result.replace(/\{@hit ([^}]+)\}/g, '+$1');
+
+    // {@filter ...} -> remove filter links
+    result = result.replace(/\{@filter ([^|{}]+)\|[^}]*\}/g, '$1');
+
+    // Now process italic/bold AFTER inner tags have been converted
+    // These can contain the HTML we just generated
+    // {@i content} -> <em>content</em> (content may now contain HTML)
+    result = result.replace(/\{@i ([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, '<em>$1</em>');
+    // Simpler fallback for {@i ...} that doesn't have nested braces
+    result = result.replace(/\{@i ([^}]+)\}/g, '<em>$1</em>');
+
+    // {@b content} -> <strong>content</strong>
+    result = result.replace(/\{@b ([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, '<strong>$1</strong>');
+    result = result.replace(/\{@b ([^}]+)\}/g, '<strong>$1</strong>');
+
+    // Catch-all for any remaining {@tag content} patterns - just show content
+    result = result.replace(/\{@\w+ ([^}]+)\}/g, '$1');
+
+    return result;
+}
+
+// Fetch table data from 5etools JSON by table name
+// Returns { tableData: [...], rawTable: {...} } or null on error
+async function fetchTableFromJson(tableName) {
+    try {
+        // Use cached data if available
+        if (!cachedJsonData) {
+            const response = await fetch(HOMEBREW_URL);
+            if (!response.ok) {
+                throw new Error('Failed to fetch homebrew data');
+            }
+            cachedJsonData = await response.json();
+        }
+
+        // Find the table by name (case-insensitive)
+        const tables = cachedJsonData.table || [];
+        const rawTable = tables.find(t =>
+            t.name.toLowerCase() === tableName.toLowerCase()
+        );
+
+        if (!rawTable) {
+            console.error('Table not found:', tableName);
+            return null;
+        }
+
+        // Convert 5etools table format to our tableData format
+        // 5etools rows: [[roll, result, ...extra], ...]
+        // Our format: [{mainResult: string, description: string}, ...]
+        const tableData = rawTable.rows.map(row => {
+            const resultObj = {
+                mainResult: '',
+                description: ''
+            };
+
+            // Column 0 is typically the roll number, column 1 is the result
+            if (row.length > 1) {
+                resultObj.mainResult = parse5eToolsText(String(row[1]));
+                // If there are more columns, join them as description
+                if (row.length > 2) {
+                    resultObj.description = parse5eToolsText(String(row[2]));
+                }
+            } else if (row.length > 0) {
+                resultObj.mainResult = parse5eToolsText(String(row[0]));
+            }
+
+            return resultObj;
+        });
+
+        return { tableData, rawTable };
+    } catch (error) {
+        console.error('Error fetching table from JSON:', error);
+        return null;
+    }
+}
+
+// Render a 5etools table as an HTML table element
+function renderJsonTable(rawTable, targetElement) {
+    const table = document.createElement('table');
+
+    // Create thead with column labels
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    if (rawTable.colLabels && rawTable.colLabels.length > 0) {
+        rawTable.colLabels.forEach(label => {
+            const th = document.createElement('th');
+            th.textContent = label;
+            headerRow.appendChild(th);
+        });
+    }
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create tbody with rows
+    const tbody = document.createElement('tbody');
+
+    rawTable.rows.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.innerHTML = parse5eToolsText(String(cell));
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+
+    // Insert the table after the target element (the data-5e-table div)
+    targetElement.parentNode.insertBefore(table, targetElement.nextSibling);
+
+    return table;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Create the dice overlay container
     const diceOverlay = document.createElement('div');
@@ -253,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableRollerContainers = document.querySelectorAll('.table-roller-container');
 
     // Initialize each table roller
-    tableRollerContainers.forEach(function(container, index) {
+    tableRollerContainers.forEach(async function(container, index) {
         const tableRollerButton = container.querySelector('.table-roller-button');
         const tableRollerResult = container.querySelector('.table-roller-result');
         const tableRollerIcon = container.querySelector('.d20-icon');
@@ -261,18 +447,57 @@ document.addEventListener('DOMContentLoaded', function() {
         const contentSelector = container.getAttribute('data-content-selector') || '.gh-content';
         const contentSection = document.querySelector(contentSelector);
 
-        if (tableRollerButton && tableRollerResult && contentSection) {
-            // Button click handler
-            tableRollerButton.addEventListener('click', function() {
-                const tableData = extractTableData(contentSection);
-                rollDice(tableData, tableRollerResult, tableRollerIcon);
-            });
+        if (!tableRollerButton || !tableRollerResult || !contentSection) {
+            return;
+        }
 
-            // Auto-roll on page load
-            const tableData = extractTableData(contentSection);
-            if (tableData.length > 0) {
-                rollDice(tableData, tableRollerResult, tableRollerIcon);
+        // Check for 5etools JSON table reference first
+        const jsonTableElement = contentSection.querySelector('[data-5e-table]');
+        let tableData = null;
+
+        if (jsonTableElement) {
+            const tableName = jsonTableElement.getAttribute('data-5e-table');
+
+            // Show loading state
+            tableRollerResult.textContent = 'Loading table...';
+            tableRollerButton.disabled = true;
+
+            // Fetch table data from JSON
+            const result = await fetchTableFromJson(tableName);
+
+            if (!result || !result.tableData || result.tableData.length === 0) {
+                tableRollerResult.textContent = 'Failed to load table "' + tableName + '"';
+                tableRollerButton.disabled = false;
+                return;
             }
+
+            tableData = result.tableData;
+
+            // Render the table as HTML in the content area
+            renderJsonTable(result.rawTable, jsonTableElement);
+
+            tableRollerButton.disabled = false;
+        } else {
+            // Fall back to extracting from markdown table in content
+            tableData = extractTableData(contentSection);
+        }
+
+        // Store table data for click handler
+        container._tableData = tableData;
+
+        // Button click handler
+        tableRollerButton.addEventListener('click', function() {
+            const data = container._tableData;
+            if (data && data.length > 0) {
+                rollDice(data, tableRollerResult, tableRollerIcon);
+            } else {
+                tableRollerResult.textContent = 'No table data found.';
+            }
+        });
+
+        // Auto-roll on page load if we have data
+        if (tableData && tableData.length > 0) {
+            rollDice(tableData, tableRollerResult, tableRollerIcon);
         }
     });
 });
