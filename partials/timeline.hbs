@@ -10,29 +10,48 @@
   // Initialize timeline when DOM is ready
   document.addEventListener("DOMContentLoaded", function() {
     const timelineEmbed = document.getElementById('timeline-embed');
-    if (!timelineEmbed) return;
-    
+    if (!timelineEmbed) {
+      console.error('[Timeline] Could not find #timeline-embed element');
+      return;
+    }
+
     // Get timeline data URL from meta tag
     const metaTag = document.querySelector('meta[name="custom:sheet_url"]');
     const sheetUrl = metaTag ? metaTag.content : null;
-    
+
     if (sheetUrl) {
-      // Create timeline with configuration
-      window.timeline = new TL.Timeline('timeline-embed', sheetUrl, {
-        timenav_position: "bottom",
-        initial_zoom: 4,
-        scale_factor: 2,
-        zoom_sequence: [1,2,3],
-        start_at_slide: 0,
-        use_bc: false,
-        hash_bookmark: false,
-        lang: "/assets/timelinejs/timeline-locale.json",
-      });
-      
-      // Set up BCE date removal
-      setupBCERemoval();
+      try {
+        // Create timeline with configuration
+        window.timeline = new TL.Timeline('timeline-embed', sheetUrl, {
+          timenav_position: "bottom",
+          initial_zoom: 4,
+          scale_factor: 2,
+          zoom_sequence: [1,2,3],
+          start_at_slide: 0,
+          use_bc: false,
+          hash_bookmark: false,
+          lang: "/assets/timelinejs/timeline-locale.json",
+        });
+
+        // Set up BCE date removal
+        setupBCERemoval();
+      } catch (error) {
+        console.error('[Timeline] Failed to initialize:', error);
+        timelineEmbed.innerHTML = `
+          <div class="timeline-access-message">
+            <h1>Timeline Couldn't Be Loaded</h1>
+            <p>Try refreshing the page.</p>
+          </div>
+        `;
+      }
     } else {
-      timelineEmbed.innerHTML = "Missing timeline URL.";
+      console.warn('[Timeline] No sheet URL found. Add meta tag: <meta name="custom:sheet_url" content="...">');
+      timelineEmbed.innerHTML = `
+        <div class="timeline-access-message">
+          <h1>Timeline Couldn't Be Loaded</h1>
+          <p>Missing timeline URL. The post needs a meta tag with the Google Sheet URL.</p>
+        </div>
+      `;
     }
   });
   
