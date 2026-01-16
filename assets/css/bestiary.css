@@ -1,5 +1,13 @@
 /* Bestiary table styles */
 
+/* Use post-style spacing instead of page-style */
+.article {
+    padding: max(8vmin, 40px) 0 max(8vmin, 64px);
+}
+.article-header {
+    padding: 0 0 max(6.4vmin, 40px);
+}
+
 .bestiary-post-content {
     width: 100%;
 }
