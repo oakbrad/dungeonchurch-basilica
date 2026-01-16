@@ -12,22 +12,44 @@
     .post-content {
         display: none !important;
     }
-    /* Match map style to Ghost */
+
+    /* Flexbox chain to fill viewport without hardcoded pixel values */
+    /* Use dvh (dynamic viewport height) for mobile browsers where address bar affects vh */
+    .viewport {
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .site-content {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .leaflet-map-template {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
     #map {
+        flex: 1 1 0;
+        min-height: 0;
         background-color: var(--color-darkmode);
-        flex: 1 !important;
-        height: calc(100vh - 88px);/* Adjust header height if needed */
-        width: 100% !important;
+        width: 100%;
         z-index: 1;
     }
 
-    /* Styling for access message */
+    /* Styling for access message - also fills available space */
     .map-access-message {
+        flex: 1 1 0;
+        min-height: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: calc(100vh - 88px);
         text-align: center;
         padding: 2rem;
         background: linear-gradient(to bottom right, #3f3f3f, var(--color-darkmode));

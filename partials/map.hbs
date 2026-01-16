@@ -250,6 +250,18 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function() {
       map.invalidateSize();
     }, 100);
+
+    // Handle orientation changes on mobile (address bar, rotation)
+    window.addEventListener('orientationchange', function() {
+      setTimeout(function() {
+        map.invalidateSize();
+      }, 200);
+    });
+
+    // Also invalidate on resize for responsive behavior
+    window.addEventListener('resize', function() {
+      map.invalidateSize();
+    });
   };
 
   img.src = dayImageUrl;
@@ -332,26 +344,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   // Function to adjust map height based on its container
+  // Note: For custom-map template, CSS flexbox handles the height automatically
   function adjustMapHeight() {
     const mapElement = document.getElementById('map');
     if (!mapElement) return;
-    
-    // Check if we're in the custom-map template
+
+    // Check if we're in the custom-map template - CSS handles this case via flexbox
     const isCustomMapTemplate = document.body.classList.contains('page-template-custom-map');
-    
-    if (isCustomMapTemplate) {
-      // For custom-map.hbs, fill the entire site-content area
-      mapElement.style.height = 'calc(100vh - 88px)'; // Adjust header height if needed
+    if (isCustomMapTemplate) return;
+
+    // For other templates, fill the parent container
+    const parentHeight = mapElement.parentElement.clientHeight;
+    if (parentHeight > 0) {
+      mapElement.style.height = '100%';
+      mapElement.style.minHeight = '400px';
     } else {
-      // For other templates, fill the parent container
-      const parentHeight = mapElement.parentElement.clientHeight;
-      if (parentHeight > 0) {
-        mapElement.style.height = '100%';
-        mapElement.style.minHeight = '400px'; // Set a minimum height for visibility
-      } else {
-        // If parent has no height, set a reasonable default
-        mapElement.style.height = '600px';
-      }
+      // If parent has no height, set a reasonable default
+      mapElement.style.height = '600px';
     }
   }
   

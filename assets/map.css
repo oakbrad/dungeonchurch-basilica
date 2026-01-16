@@ -27,12 +27,6 @@
       z-index: 1;
     }
 
-    /* For the custom-map template */
-    .page-template-custom-map #map {
-      height: calc(100vh - 88px); /* Adjust header height if needed */
-      min-height: calc(100vh - 88px);
-    }
-
     /* Make the map container fill its parent */
     .leaflet-map-template {
       display: flex;
@@ -61,11 +55,29 @@
       border: 1px solid #a5a5a550 !important;
       border-radius: 4px !important;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.4) !important;
+      z-index: 1000 !important;
     }
     .leaflet-control-layers-toggle {
       background-color: rgba(21, 23, 26, 0.9) !important;
       border: none;
       border-radius: 4px !important;
+    }
+
+    /* Bottom-left controls positioning - uses fixed positioning on mobile */
+    /* JavaScript in map.hbs handles positioning via CSS custom property */
+    .leaflet-bottom.leaflet-left {
+      z-index: 1000 !important;
+      bottom: 10px !important;
+      left: 10px !important;
+    }
+
+    /* Mobile: use fixed positioning to escape the map container */
+    @media (max-width: 768px), (hover: none) and (pointer: coarse) {
+      .leaflet-bottom.leaflet-left {
+        position: fixed !important;
+        bottom: 10px !important;
+        left: 10px !important;
+      }
     }
 
     .leaflet-control-layers label {
