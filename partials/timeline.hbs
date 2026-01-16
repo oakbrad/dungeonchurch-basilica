@@ -19,9 +19,15 @@
   #timeline-embed .tl-timeline-container {
     height: 100% !important;
   }
+
+  /* Hide the data container - it's only used for extracting the sheet URL */
+  .timeline-data-container {
+    display: none !important;
+  }
 </style>
 
 <div id="timeline-embed"></div>
+<div class="timeline-data-container">{{content}}</div>
 
 <script src="{{asset 'timelinejs/js/timeline.js'}}"></script>
 
@@ -34,9 +40,8 @@
       return;
     }
 
-    // Get timeline data URL from meta tag
-    const metaTag = document.querySelector('meta[name="custom:sheet_url"]');
-    const sheetUrl = metaTag ? metaTag.content : null;
+    // Get timeline data URL - check post content first, then fall back to meta tag
+    const sheetUrl = extractSheetUrl();
 
     if (sheetUrl) {
       try {
@@ -152,6 +157,44 @@
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', adjustTimelineHeight);
     }
+  }
+
+  // Extract Google Sheet URL from post content or meta tag
+  // Priority: 1. Bookmark card in content, 2. Meta tag injection
+  function extractSheetUrl() {
+    const dataContainer = document.querySelector('.timeline-data-container');
+
+    if (dataContainer) {
+      // Look for a Ghost bookmark card with a Google Sheets URL
+      // When you paste a Google Sheet link, Ghost creates a bookmark card
+      const bookmarkLink = dataContainer.querySelector('.kg-bookmark-card a.kg-bookmark-container');
+      if (bookmarkLink && bookmarkLink.href) {
+        const href = bookmarkLink.href;
+        // Check if it's a Google Sheets URL
+        if (href.includes('docs.google.com/spreadsheets')) {
+          console.log('[Timeline] Found Google Sheet URL in post content');
+          return href;
+        }
+      }
+
+      // Also check for a simple link to Google Sheets (in case it wasn't converted to bookmark)
+      const allLinks = dataContainer.querySelectorAll('a');
+      for (const link of allLinks) {
+        if (link.href && link.href.includes('docs.google.com/spreadsheets')) {
+          console.log('[Timeline] Found Google Sheet URL in post link');
+          return link.href;
+        }
+      }
+    }
+
+    // Fall back to meta tag (for code injection method)
+    const metaTag = document.querySelector('meta[name="custom:sheet_url"]');
+    if (metaTag && metaTag.content) {
+      console.log('[Timeline] Found Google Sheet URL in meta tag');
+      return metaTag.content;
+    }
+
+    return null;
   }
 </script>
 

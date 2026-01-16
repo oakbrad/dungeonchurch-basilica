@@ -1,12 +1,18 @@
-<!-- 
+<!--
 USING THIS TEMPLATE:
 
-Apply it to a post in Ghost via Templates
-Go to Code Injection, and inject the URL of the Google Sheet:
+1. Apply this template to a post in Ghost via Templates
+2. Add the Google Sheet URL using ONE of these methods:
 
-<meta name="custom:sheet_url" content="https://docs.google.com/spreadsheets/d/e/XXXXX/pubhtml">
+   METHOD 1 - Post Content (Recommended):
+   Simply paste the Google Sheet URL into the post content.
+   Ghost will create a bookmark card that the template will detect.
 
-In order for this to work, the Sheet must be "Published" not just "Shared"
+   METHOD 2 - Code Injection:
+   Go to Code Injection and inject:
+   <meta name="custom:sheet_url" content="https://docs.google.com/spreadsheets/d/e/XXXXX/pubhtml">
+
+IMPORTANT: The Sheet must be "Published to the web" (not just "Shared")
 -->
 {{!< default}}
 {{#contentFor "title"}}{{post.title}} Timeline{{/contentFor}}
