@@ -12,6 +12,7 @@ In order for this to work, the Sheet must be "Published" not just "Shared"
 {{#contentFor "title"}}{{post.title}} Timeline{{/contentFor}}
 
 <style>
+  /* Remove site footer and content */
   .site-footer,
   .content-title,
   .post-full-footer,
@@ -19,20 +20,37 @@ In order for this to work, the Sheet must be "Published" not just "Shared"
     display: none !important;
   }
 
+  /* Flexbox chain to fill viewport without hardcoded pixel values */
+  /* Use dvh (dynamic viewport height) for mobile browsers where address bar affects vh */
+  .viewport {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .site-content {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   .timeline-container {
-    flex: 1;
-    height: calc(100vh - 88px); /* Adjust header height if needed */
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     background: var(--color-darkmode) !important;
   }
 
-  /* Styling for access message */
+  /* Styling for access message - also fills available space */
   .timeline-access-message {
+    flex: 1 1 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
     text-align: center;
     padding: 2rem;
     background: linear-gradient(to bottom right, #3f3f3f, var(--color-darkmode));

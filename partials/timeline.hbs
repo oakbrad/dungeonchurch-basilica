@@ -2,6 +2,25 @@
 <link rel="stylesheet" href="{{asset 'timelinejs/css/timeline.css'}}">
 <link rel="stylesheet" href="{{asset 'timeline.css'}}">
 
+<style>
+  #timeline-embed {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;  /* Prevent TimelineJS from extending beyond container */
+  }
+
+  /* Force TimelineJS internal elements to respect container height */
+  #timeline-embed .tl-timeline {
+    height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  #timeline-embed .tl-timeline-container {
+    height: 100% !important;
+  }
+</style>
+
 <div id="timeline-embed"></div>
 
 <script src="{{asset 'timelinejs/js/timeline.js'}}"></script>
@@ -35,6 +54,9 @@
 
         // Set up BCE date removal
         setupBCERemoval();
+
+        // Set up height management for mobile browsers
+        setupTimelineHeight();
       } catch (error) {
         console.error('[Timeline] Failed to initialize:', error);
         timelineEmbed.innerHTML = `
@@ -86,6 +108,50 @@
       const left = parseFloat(tick.style.left);
       if (left < 0) tick.remove();
     });
+  }
+
+  // Set up height management for mobile browsers
+  function setupTimelineHeight() {
+    function adjustTimelineHeight() {
+      const container = document.getElementById('timeline-embed');
+      if (!container) return;
+
+      // Get the viewport height (use visualViewport for mobile accuracy)
+      const viewportHeight = window.visualViewport
+        ? window.visualViewport.height
+        : window.innerHeight;
+
+      // Get container's position from top of viewport
+      const containerTop = container.getBoundingClientRect().top;
+
+      // Calculate available height (viewport minus header/nav above)
+      const availableHeight = Math.max(viewportHeight - containerTop, 300);
+
+      // Set both height and max-height to force constraint
+      container.style.height = availableHeight + 'px';
+      container.style.maxHeight = availableHeight + 'px';
+
+      // Also force the inner timeline element if it exists
+      const innerTimeline = container.querySelector('.tl-timeline');
+      if (innerTimeline) {
+        innerTimeline.style.height = availableHeight + 'px';
+        innerTimeline.style.maxHeight = availableHeight + 'px';
+      }
+    }
+
+    // Initial adjustment - wait longer for TimelineJS to fully render
+    setTimeout(adjustTimelineHeight, 500);
+
+    // Re-adjust on resize and orientation change
+    window.addEventListener('resize', adjustTimelineHeight);
+    window.addEventListener('orientationchange', function() {
+      setTimeout(adjustTimelineHeight, 300);
+    });
+
+    // Listen to visualViewport resize (fires on address bar show/hide)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', adjustTimelineHeight);
+    }
   }
 </script>
 
