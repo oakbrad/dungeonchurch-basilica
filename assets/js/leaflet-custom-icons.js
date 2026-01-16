@@ -1,5 +1,11 @@
 // Custom Leaflet icons for the map
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if Leaflet is loaded
+    if (typeof L === 'undefined') {
+        console.error('Leaflet not loaded - custom icons unavailable');
+        return;
+    }
+
     // Define custom icons
     window.customIcons = {
         // DC colored bright flagred
@@ -41,22 +47,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Circle Map Icon
         'circle-map': L.icon({
             iconUrl: '/assets/images/icons/circle-map.png',
-            //shadowUrl: '/assets/images/icons/shadow-flag.png',
-            iconSize: [60, 60],     // size of the icon
-            iconAnchor: [30, 30],   // point of the icon which will correspond to marker's location
-            tooltipAnchor: [30, 0],   // point from which the tooltip should open relative to the iconAnchor
-            //shadowSize: [60, 60],
-            //shadowAnchor: [10, 54]
+            iconSize: [60, 60],
+            iconAnchor: [30, 30],
+            tooltipAnchor: [30, 0]
         }),
         // Circle Map Red
         'circle-map-red': L.icon({
             iconUrl: '/assets/images/icons/circle-map-red.png',
-            //shadowUrl: '/assets/images/icons/shadow-flag.png',
-            iconSize: [60, 60],     // size of the icon
-            iconAnchor: [30, 30],   // point of the icon which will correspond to marker's location
-            tooltipAnchor: [30, 0],   // point from which the tooltip should open relative to the iconAnchor
-            //shadowSize: [60, 60],
-            //shadowAnchor: [10, 54]
+            iconSize: [60, 60],
+            iconAnchor: [30, 30],
+            tooltipAnchor: [30, 0]
         })
     };
 });

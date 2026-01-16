@@ -74,7 +74,7 @@ You can also use predefined custom icons by specifying the `iconType` property:
     {
       "position": [500, 300],
       "popup": "This is a red flag marker",
-      "iconType": "flagred"
+      "iconType": "flag-red"
     }
   ]
 }
@@ -87,9 +87,11 @@ The following custom icons are available for use with the `iconType` property:
 | Icon | iconType | Shadow Included | Description |
 |------|----------|----------------|-------------|
 | <img src="/assets/images/icons/flag.png" height="60"> | `flag` | ✅ | DC colored bright flag |
-| <img src="/assets/images/icons/flagred.png" height="60"> | `flagred` | ✅ | Red flag icon |
-| <img src="/assets/images/icons/flagyellow.png" height="60"> | `flagyellow` | ✅ | Yellow flag icon |
-| <img src="/assets/images/icons/flagpurple.png" height="60"> | `flagpurple` | ✅ | Purple flag icon |
+| <img src="/assets/images/icons/flag-red.png" height="60"> | `flag-red` | ✅ | Red flag icon |
+| <img src="/assets/images/icons/flag-yellow.png" height="60"> | `flag-yellow` | ✅ | Yellow flag icon |
+| <img src="/assets/images/icons/flag-purple.png" height="60"> | `flag-purple` | ✅ | Purple flag icon |
+| <img src="/assets/images/icons/circle-map.png" height="60"> | `circle-map` | ❌ | Circle marker icon |
+| <img src="/assets/images/icons/circle-map-red.png" height="60"> | `circle-map-red` | ❌ | Red circle marker icon |
 
 ### Polylines
 
@@ -200,7 +202,7 @@ Here's a complete example that includes multiple types of overlays:
     {
       "position": [650, 450],
       "popup": "Red flag marker",
-      "iconType": "flagred"
+      "iconType": "flag-red"
     }
   ],
   "polylines": [

@@ -101,6 +101,17 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Load the day image first
   const img = new Image();
+
+  img.onerror = function () {
+    // Show error message if image fails to load (reuses .map-access-message styles)
+    mapElement.innerHTML = `
+      <div class="map-access-message">
+        <h1>Map Not Found</h1>
+        <p>The map image could not be loaded. Please check that the feature image is set correctly.</p>
+      </div>
+    `;
+  };
+
   img.onload = function () {
     const w = this.naturalWidth;
     const h = this.naturalHeight;
@@ -530,7 +541,8 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Enable debug info with a query parameter
   if (window.location.search.includes('debug=true')) {
-    document.querySelector('.debug-info').style.display = 'block';
+    const debugEl = document.querySelector('.debug-info');
+    if (debugEl) debugEl.style.display = 'block';
   }
 });
 </script>

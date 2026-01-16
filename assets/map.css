@@ -182,8 +182,9 @@
     /* Mobile adjustments */
     @media only screen and (max-width: 768px) {
         .leaflet-tooltip {
-            width: 250px !important;
+            width: auto !important;
             padding: 6px 10px !important;
+            white-space: normal !important;
         }
     }
 
@@ -192,4 +193,29 @@
       .gh-head, .leaflet-control-container, video, .gh-portal-triggerbtn-iframe {
         display: none !important;
       }
+    }
+
+    /* Map access/error message styling */
+    .map-access-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 400px;
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(to bottom right, #3f3f3f, var(--color-darkmode));
+        color: #fff;
+    }
+
+    .map-access-message h1 {
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+
+    .map-access-message p {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
     }
