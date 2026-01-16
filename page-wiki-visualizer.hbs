@@ -1,8 +1,9 @@
 {{!< default}}
 {{#contentFor "title"}}{{post.title}} - Wiki Visualization{{/contentFor}}
 
-{{!-- The tag above means: insert everything in this file
-into the {body} tag of the default.hbs template --}}
+{{!-- Embed mode support - hides header/footer when loaded in iframe --}}
+<link rel="stylesheet" href="{{asset "embed.css"}}">
+<script src="{{asset "embed.js"}}"></script>
 
 <style>
     /* Custom styles for the wiki visualization page */
