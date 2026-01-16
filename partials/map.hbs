@@ -136,6 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
       position: 'topright'
     }).addTo(map);
 
+    // Create custom pane for video overlay (above markers at 600, below tooltips at 650)
+    map.createPane('videoPane');
+    map.getPane('videoPane').style.zIndex = 625;
+
     // Create base layers for day and night
     const dayLayer = L.imageOverlay(dayImageUrl, imageBounds);
     let nightLayer = null;
@@ -182,7 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
         loop: true,
         muted: true,
         opacity: opacity,
-        keepAspectRatio: false
+        keepAspectRatio: false,
+        pane: 'videoPane'  // Use custom pane to render above markers
       }).addTo(map);
       
       // Add the video overlay to the overlay layers

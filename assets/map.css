@@ -1,6 +1,7 @@
-  /* Keep video Overlay on top of map layers but below markers/tooltips */
-  .leaflet-overlay-pane video {
-      z-index: 650 !important;
+  /* Video pane is created in JS with z-index 625 (above markers at 600, below tooltips at 650) */
+  /* Hide picture-in-picture on videos in the custom video pane */
+  .leaflet-videoPane-pane video::-webkit-media-controls-picture-in-picture-button {
+      display: none !important;
     }
 
     /* Hide picture-in-picture button */
