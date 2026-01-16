@@ -27,7 +27,25 @@
     max-height: 100vh !important;
 }
 
-/* 
+/* Fix timeline height to be full viewport height in embed mode */
+.embed-mode #timeline-embed {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+.embed-mode #timeline-embed .tl-timeline {
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+.embed-mode .timeline-access-message {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+/*
 Embed mode detection script is in embed.js
 To use embed mode:
 1. Include both files in your template:
