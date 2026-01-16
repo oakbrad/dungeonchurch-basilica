@@ -1,35 +1,22 @@
 // Table scroll effects
-document.addEventListener('DOMContentLoaded', function() {
-    // Find the table container and content
-    const contentSection = document.querySelector('.gh-content');
-    const tables = contentSection ? contentSection.querySelectorAll('table') : [];
-    
-    // Only proceed if we have tables
-    if (tables.length === 0) return;
-    
-    // Get the first table (main table for the page)
-    const table = tables[0];
-    
-    // Create background sigil element
-    const backgroundSigil = document.createElement('div');
-    backgroundSigil.className = 'background-sigil';
-    backgroundSigil.innerHTML = document.querySelector('.partials-sigil-template').innerHTML;
-    document.body.appendChild(backgroundSigil);
-    
-    // Progress indicator is now handled by the reading-progress partial
-    
-    // Variables to track scroll state
+(function() {
+    let backgroundSigil = null;
+    let table = null;
     let ticking = false;
-    let tableTop = table.getBoundingClientRect().top + window.pageYOffset;
-    let tableBottom = tableTop + table.offsetHeight;
-    let windowHeight = window.innerHeight;
+    let tableTop = 0;
+    let tableBottom = 0;
+    let windowHeight = 0;
+    let isLongTable = false;
+    let scrollHandler = null;
+    let resizeHandler = null;
 
-    // Calculate if the table is long enough to warrant sigil effect
-    // We'll consider "long" as more than 2x the viewport height
-    let isLongTable = table.offsetHeight > (windowHeight * 2);
-    
     // Function to handle scroll effects
     function handleScroll() {
+        if (!table || !backgroundSigil) {
+            ticking = false;
+            return;
+        }
+
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
         // Calculate scroll percentage through the table
@@ -43,35 +30,93 @@ document.addEventListener('DOMContentLoaded', function() {
             // AND hide it when scrolled past the table
             if (scrollTop > tableTop + (windowHeight / 2) && scrollTop < tableBottom) {
                 backgroundSigil.classList.add('visible');
-                
+
                 // More dramatic rotation based on scroll position
                 const rotation = (tableScrollPercentage / 100) * 80 - 20; // -20 to +60 degrees
-                backgroundSigil.querySelector('svg').style.transform = 
-                    `scale(1.2) rotate(${rotation}deg)`;
+                const svg = backgroundSigil.querySelector('svg');
+                if (svg) {
+                    svg.style.transform = `scale(1.2) rotate(${rotation}deg)`;
+                }
             } else {
                 backgroundSigil.classList.remove('visible');
             }
         }
-        
+
         ticking = false;
     }
-    
-    // Listen for scroll events with requestAnimationFrame for performance
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            window.requestAnimationFrame(handleScroll);
-            ticking = true;
-        }
-    });
-    
-    // Update dimensions on window resize
-    window.addEventListener('resize', function() {
+
+    function updateDimensions() {
+        if (!table) return;
         windowHeight = window.innerHeight;
         tableTop = table.getBoundingClientRect().top + window.pageYOffset;
         tableBottom = tableTop + table.offsetHeight;
         isLongTable = table.offsetHeight > (windowHeight * 2);
+    }
+
+    // Initialize or reinitialize with a specific table element
+    // Can be called after dynamically loading a table
+    function initTableScrollEffects(targetTable) {
+        // Use provided table or find one in the page
+        if (targetTable) {
+            table = targetTable;
+        } else {
+            // Look for tables in both .gh-content and .table-roller-table-container
+            const contentSection = document.querySelector('.gh-content');
+            const rollerContainer = document.querySelector('.table-roller-table-container');
+
+            let tables = [];
+            if (contentSection) {
+                tables = tables.concat(Array.from(contentSection.querySelectorAll('table')));
+            }
+            if (rollerContainer) {
+                tables = tables.concat(Array.from(rollerContainer.querySelectorAll('table')));
+            }
+
+            if (tables.length === 0) return;
+            table = tables[0];
+        }
+
+        // Create background sigil element if it doesn't exist
+        if (!backgroundSigil) {
+            const sigilTemplate = document.querySelector('.partials-sigil-template');
+            if (!sigilTemplate) return;
+
+            backgroundSigil = document.createElement('div');
+            backgroundSigil.className = 'background-sigil';
+            backgroundSigil.innerHTML = sigilTemplate.innerHTML;
+            document.body.appendChild(backgroundSigil);
+        }
+
+        // Update dimensions for the new table
+        updateDimensions();
+
+        // Set up event listeners (only once)
+        if (!scrollHandler) {
+            scrollHandler = function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(handleScroll);
+                    ticking = true;
+                }
+            };
+            window.addEventListener('scroll', scrollHandler);
+        }
+
+        if (!resizeHandler) {
+            resizeHandler = function() {
+                updateDimensions();
+            };
+            window.addEventListener('resize', resizeHandler);
+        }
+
+        // Initial call to set up the state
+        handleScroll();
+    }
+
+    // Expose the init function globally so rolltable.js can call it
+    window.initTableScrollEffects = initTableScrollEffects;
+
+    // Auto-initialize on DOMContentLoaded for markdown tables
+    document.addEventListener('DOMContentLoaded', function() {
+        initTableScrollEffects();
     });
-    
-    // Initial call to set up the state
-    handleScroll();
-});
+})();

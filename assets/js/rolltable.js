@@ -481,7 +481,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Render the table into the container's table area
             if (tableContainer) {
-                renderJsonTable(result.rawTable, tableContainer, false);
+                const renderedTable = renderJsonTable(result.rawTable, tableContainer, false);
+                // Initialize scroll effects for the dynamically loaded table
+                if (window.initTableScrollEffects) {
+                    window.initTableScrollEffects(renderedTable);
+                }
             }
 
             tableRollerButton.disabled = false;
@@ -507,7 +511,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 tableData = result.tableData;
 
                 // Render the table after the reference element
-                renderJsonTable(result.rawTable, jsonTableElement);
+                const renderedTable = renderJsonTable(result.rawTable, jsonTableElement);
+                // Initialize scroll effects for the dynamically loaded table
+                if (window.initTableScrollEffects) {
+                    window.initTableScrollEffects(renderedTable);
+                }
 
                 tableRollerButton.disabled = false;
             } else {
