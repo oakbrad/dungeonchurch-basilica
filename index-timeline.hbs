@@ -33,7 +33,7 @@
   .timeline-section-header h2 {
     margin: 0 0 0.5rem 0;
     font-family: "Waning Star", var(--font-sans);
-    font-size: 2.6rem;
+    font-size: 3rem;
     font-weight: 800;
     line-height: 1.2;
   }
@@ -50,8 +50,9 @@
 
   .timeline-section-meta {
     color: var(--color-secondary-text);
-    font-size: 1.1rem;
+    font-size: 1.6rem;
     margin: 0;
+    line-height: 1.4;
   }
 
   /* Embedded timeline container - break out to full viewport width */
@@ -84,6 +85,26 @@
     padding: 2rem;
     background: linear-gradient(to bottom right, #3f3f3f, var(--color-darkmode));
     color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Blurred featured image background for locked timelines */
+  .timeline-access-message::before {
+    content: '';
+    position: absolute;
+    inset: -20px; /* Extend beyond container to hide blur edges */
+    background-image: var(--locked-bg-image);
+    background-size: cover;
+    background-position: center;
+    filter: blur(15px);
+    opacity: 0.4;
+    z-index: 0;
+  }
+
+  .timeline-access-message > * {
+    position: relative;
+    z-index: 1;
   }
 
   .timeline-access-message h1 {
@@ -145,7 +166,11 @@
     }
 
     .timeline-section-header h2 {
-      font-size: 2.2rem;
+      font-size: 2.6rem;
+    }
+
+    .timeline-section-meta {
+      font-size: 1.4rem;
     }
 
     .timeline-embed-instance {
@@ -190,7 +215,7 @@
             {{> "timeline-embed"}}
           {{else}}
             <div class="timeline-embed-instance">
-              <div class="timeline-access-message">
+              <div class="timeline-access-message"{{#if feature_image}} style="--locked-bg-image: url('{{feature_image}}')"{{/if}}>
                 <h1>This timeline is available to Members</h1>
                 <p>Sign up or log in to view this timeline.</p>
                 <div class="timeline-access-cta">
@@ -206,7 +231,7 @@
               {{> "timeline-embed"}}
             {{else}}
               <div class="timeline-embed-instance">
-                <div class="timeline-access-message">
+                <div class="timeline-access-message"{{#if feature_image}} style="--locked-bg-image: url('{{feature_image}}')"{{/if}}>
                   <h1>This timeline is available to Supporters</h1>
                   <p>Upgrade your membership to view this timeline.</p>
                   <div class="timeline-access-cta">
