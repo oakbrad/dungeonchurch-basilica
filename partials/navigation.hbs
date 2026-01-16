@@ -1,0 +1,26 @@
+<ul class="nav">
+{{#foreach navigation}}
+    {{#match label "5eTools[child]"}}
+        {{!-- Only show 5eTools to logged-in members --}}
+        {{#if @member}}
+            <li class="nav-{{slug}}{{#if current}} nav-current{{/if}}">
+                <a href="{{url absolute="true"}}">{{label}}</a>
+            </li>
+        {{/if}}
+    {{else match label "Lore Wiki[child]"}}
+        {{!-- Wiki: different URL based on login status --}}
+        <li class="nav-{{slug}}{{#if current}} nav-current{{/if}}">
+            {{#if @member}}
+                <a href="{{url absolute="true"}}">{{label}}</a>
+            {{else}}
+                <a href="/wiki-access/">{{label}}</a>
+            {{/if}}
+        </li>
+    {{else}}
+        {{!-- All other nav items render normally --}}
+        <li class="nav-{{slug}}{{#if current}} nav-current{{/if}}">
+            <a href="{{url absolute="true"}}">{{label}}</a>
+        </li>
+    {{/match}}
+{{/foreach}}
+</ul>
