@@ -32,7 +32,10 @@
 
   .timeline-section-header h2 {
     margin: 0 0 0.5rem 0;
-    font-size: 2.4rem;
+    font-family: "Waning Star", var(--font-sans);
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.2;
   }
 
   .timeline-section-header h2 a {
@@ -70,7 +73,7 @@
     display: none !important;
   }
 
-  /* Access message styling for restricted timelines */
+  /* Access message styling - matches custom-timeline.hbs */
   .timeline-access-message {
     display: flex;
     flex-direction: column;
@@ -83,32 +86,31 @@
     color: #fff;
   }
 
-  .timeline-access-message h3 {
+  .timeline-access-message h1 {
     margin-bottom: 1rem;
     color: #fff;
-    font-size: 1.5rem;
   }
 
   .timeline-access-message p {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    max-width: 400px;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
   }
 
   .timeline-access-cta {
     display: flex;
     gap: 1rem;
+    margin-top: 1rem;
   }
 
   .timeline-signup-button,
   .timeline-signin-button,
   .timeline-upgrade-button {
     display: inline-block;
-    padding: 0.6rem 1.2rem;
+    padding: 0.8rem 1.5rem;
     border-radius: 4px;
     font-weight: 600;
-    text-decoration: none;
-    font-size: 0.9rem;
+    text-decoration: none !important;
     transition: all 0.2s ease;
   }
 
@@ -143,11 +145,15 @@
     }
 
     .timeline-section-header h2 {
-      font-size: 1.8rem;
+      font-size: 2.2rem;
     }
 
     .timeline-embed-instance {
       height: 400px;
+    }
+
+    .timeline-access-message p {
+      font-size: 1rem;
     }
 
     .timeline-access-cta {
@@ -185,10 +191,10 @@
           {{else}}
             <div class="timeline-embed-instance">
               <div class="timeline-access-message">
-                <h3>Members Only</h3>
+                <h1>This timeline is available to Members</h1>
                 <p>Sign up or log in to view this timeline.</p>
                 <div class="timeline-access-cta">
-                  <a href="#/portal/signup" class="timeline-signup-button">Sign up</a>
+                  <a href="#/portal/signup" class="timeline-signup-button">Sign up now</a>
                   <a href="#/portal/signin" class="timeline-signin-button">Log in</a>
                 </div>
               </div>
@@ -201,13 +207,13 @@
             {{else}}
               <div class="timeline-embed-instance">
                 <div class="timeline-access-message">
-                  <h3>Supporters Only</h3>
-                  <p>Upgrade to view this timeline.</p>
+                  <h1>This timeline is available to Supporters</h1>
+                  <p>Upgrade your membership to view this timeline.</p>
                   <div class="timeline-access-cta">
                     {{#if @member}}
-                      <a href="#/portal/account/plans" class="timeline-upgrade-button">Upgrade</a>
+                      <a href="#/portal/account/plans" class="timeline-upgrade-button">Upgrade now</a>
                     {{else}}
-                      <a href="#/portal/signup" class="timeline-signup-button">Sign up</a>
+                      <a href="#/portal/signup" class="timeline-signup-button">Sign up now</a>
                       <a href="#/portal/signin" class="timeline-signin-button">Log in</a>
                     {{/if}}
                   </div>
