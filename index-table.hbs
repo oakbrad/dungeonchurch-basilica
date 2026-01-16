@@ -1,0 +1,75 @@
+{{!< default}}
+{{#contentFor "title"}}Random Roll Tables{{/contentFor}}
+{{!-- Index page for roll tables - displays a card grid of all tables --}}
+
+<style>
+    /* Prevent horizontal overflow */
+    body {
+        overflow-x: hidden;
+    }
+
+    .table-index-header {
+        text-align: center;
+        padding: 60px 0 40px;
+    }
+
+    .table-index-title {
+        font-family: 'Waning Star', serif;
+        font-size: 6rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin: 0;
+        color: #fff;
+    }
+
+    .table-index-description {
+        font-size: 1.8rem;
+        color: var(--color-secondary-text);
+        margin-top: 1rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .post-feed {
+        padding-top: 30px !important;
+        overflow: hidden !important;
+    }
+
+    /* Responsive adjustments */
+    @media only screen and (max-width: 768px) {
+        .table-index-title {
+            font-size: 4rem;
+        }
+
+        .table-index-description {
+            font-size: 1.5rem;
+            padding: 0 20px;
+        }
+
+        .table-index-header {
+            padding: 40px 0 30px;
+        }
+    }
+</style>
+
+{{!-- The main content area --}}
+<main id="site-main" class="site-main outer">
+<div class="inner posts">
+
+    <header class="table-index-header">
+        <h1 class="table-index-title">Roll Tables</h1>
+        <p class="table-index-description">Random generators for your adventures in Pyora</p>
+    </header>
+
+    <div class="post-feed">
+        {{#foreach posts}}
+            {{!-- The tag below includes the markup for each post - partials/table-card.hbs --}}
+            {{> "table-card"}}
+        {{/foreach}}
+    </div>
+
+    {{pagination}}
+
+</div>
+</main>
