@@ -2,6 +2,16 @@
 {{#contentFor "title"}}Random Roll Tables{{/contentFor}}
 {{!-- Index page for roll tables - displays a card grid of all tables --}}
 
+{{!-- 3D Dice libraries --}}
+<script src="{{asset "js/lib/three.min.js"}}"></script>
+<script src="{{asset "js/lib/cannon.min.js"}}"></script>
+<script src="{{asset "js/lib/teal.js"}}"></script>
+<script src="{{asset "js/lib/dice.js"}}"></script>
+
+{{!-- Pyoran Roller assets --}}
+<link rel="stylesheet" href="{{asset "css/pyoran-roller.css"}}">
+<script src="{{asset "js/pyoran-roller.js"}}"></script>
+
 <style>
     /* Prevent horizontal overflow */
     body {
@@ -10,7 +20,7 @@
 
     .table-index-header {
         text-align: center;
-        padding: 60px 0 40px;
+        padding: 40px 0 20px;
     }
 
     .table-index-title {
@@ -31,6 +41,22 @@
         margin-right: auto;
     }
 
+    /* Section divider */
+    .tables-section-header {
+        text-align: center;
+        margin: 40px 0 20px;
+        padding-top: 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tables-section-title {
+        font-family: 'Waning Star', serif;
+        font-size: 3rem;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+    }
+
     .post-feed {
         padding-top: 30px !important;
         overflow: hidden !important;
@@ -48,7 +74,11 @@
         }
 
         .table-index-header {
-            padding: 40px 0 30px;
+            padding: 30px 0 15px;
+        }
+
+        .tables-section-title {
+            font-size: 2.4rem;
         }
     }
 </style>
@@ -58,9 +88,45 @@
 <div class="inner posts">
 
     <header class="table-index-header">
-        <h1 class="table-index-title">Roll Tables</h1>
-        <p class="table-index-description">Random generators for your adventures in Pyora</p>
+        <h1 class="table-index-title">Random Tables</h1>
     </header>
+
+    {{!-- Pyoran Character Roller --}}
+    <div class="pyoran-roller-container">
+        <div class="pyoran-dice-tray">
+            <div class="pyoran-dice-tray-sigil">{{> "icons/sigil"}}</div>
+            <div class="pyoran-dice-tray-inner"></div>
+        </div>
+
+        <button class="pyoran-roll-button">
+            <span class="d20-icon">{{> "icons/d20"}}</span>
+            Roll a Pyoran
+        </button>
+
+        <div class="pyoran-results">
+            <div class="pyoran-result-slot" data-result="Species">
+                <div class="pyoran-result-label">Species</div>
+                <div class="pyoran-result-value">...</div>
+            </div>
+            <div class="pyoran-result-slot" data-result="Background">
+                <div class="pyoran-result-label">Background</div>
+                <div class="pyoran-result-value">...</div>
+            </div>
+            <div class="pyoran-result-slot" data-result="Patron">
+                <div class="pyoran-result-label">Patron</div>
+                <div class="pyoran-result-value">...</div>
+            </div>
+            <div class="pyoran-result-slot" data-result="Hometown">
+                <div class="pyoran-result-label">Hometown</div>
+                <div class="pyoran-result-value">...</div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- All Tables Section --}}
+    <div class="tables-section-header">
+        <h2 class="tables-section-title">All Roll Tables</h2>
+    </div>
 
     <div class="post-feed">
         {{#foreach posts}}
