@@ -25,7 +25,7 @@ which templates loop over to generate a list of posts. --}}
 
         {{#unless access}}
         {{^has visibility="public"}}
-            <div class="post-card-access">
+            <div class="post-card-access" data-gate-tier="{{visibility}}">
                 {{> "icons/locked"}}
                 {{#has visibility="members"}}
                     Members Only

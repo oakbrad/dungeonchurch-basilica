@@ -142,7 +142,7 @@ IMPORTANT: The Sheet must be "Published to the web" (not just "Shared")
         {{#if @member}}
           {{> "timeline"}}
         {{else}}
-          <div class="timeline-access-message">
+          <div class="timeline-access-message" data-gate-tier="members">
             <h1>This timeline is available to Members</h1>
             <p>Sign up or log in to view this timeline.</p>
             <div class="timeline-access-cta">
@@ -157,7 +157,7 @@ IMPORTANT: The Sheet must be "Published to the web" (not just "Shared")
           {{#if @member.paid}}
             {{> "timeline"}}
           {{else}}
-            <div class="timeline-access-message">
+            <div class="timeline-access-message" data-gate-tier="paid">
               <h1>This timeline is available to Supporters</h1>
               <p>Upgrade your membership to view this timeline.</p>
               <div class="timeline-access-cta">

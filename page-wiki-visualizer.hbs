@@ -96,6 +96,11 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Hide loading indicator when iframe is loaded
     iframe.addEventListener('load', function() {
+        if (window.dcTrack) {
+            let domain = '';
+            try { domain = new URL(iframe.src).hostname; } catch (e) {}
+            dcTrack('embed-view', {kind: 'wiki-visualizer', src_domain: domain});
+        }
         // Add a slight delay for smoother transition
         setTimeout(function() {
             loadingIndicator.style.opacity = '0';

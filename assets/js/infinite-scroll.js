@@ -53,6 +53,10 @@
             feedElement.appendChild(document.importNode(item, true));
         });
 
+        if (window.dcTrack) {
+            dcTrack('infinite-scroll-load', {url: this.responseURL || nextElement.href});
+        }
+
         // set next link
         var resNextElement = this.response.querySelector('link[rel=next]');
         if (resNextElement) {

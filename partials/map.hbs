@@ -237,6 +237,27 @@ document.addEventListener("DOMContentLoaded", function () {
         position: 'bottomleft'
       }).addTo(map);
     }
+
+    // Analytics: layer switches and marker popups. Listeners are registered
+    // unconditionally (Leaflet is already loaded here) and guard at fire time,
+    // because this runs from img.onload and may beat the analytics bundle.
+    map.on('baselayerchange', function (e) {
+      if (window.dcTrack) { dcTrack('map-layer-change', {kind: 'base', layer: e.name}); }
+    });
+    map.on('overlayadd', function (e) {
+      if (window.dcTrack) { dcTrack('map-layer-change', {kind: 'overlay-on', layer: e.name}); }
+    });
+    map.on('overlayremove', function (e) {
+      if (window.dcTrack) { dcTrack('map-layer-change', {kind: 'overlay-off', layer: e.name}); }
+    });
+    map.on('popupopen', function (e) {
+      if (!window.dcTrack) { return; }
+      var content = e.popup.getContent();
+      var text = typeof content === 'string' ? content : (content && content.textContent) || '';
+      dcTrack('map-marker-open', {
+        marker: text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+      });
+    });
     
     // Get viewport height and calculate scale to fit height
     const viewportHeight = window.innerHeight;

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to update the display based on stream status
+    let wasLive = false; // fire livestream-live once per page, on the off->on transition
     function updateStreamDisplay(isStreamActive) {
         const coverContainer = document.querySelector('.site-header-content');
         if (!coverContainer) return;
@@ -56,6 +57,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let livestreamBanner = document.getElementById('livestream-banner');
         
         if (isStreamActive) {
+            if (!wasLive) {
+                wasLive = true;
+                if (window.dcTrack) { dcTrack('livestream-live'); }
+            }
             // If we have a cover image, replace it with the livestream
             if (coverImage && livestreamIframe) {
                 // If the iframe isn't already in the DOM, insert it

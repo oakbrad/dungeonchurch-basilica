@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {{#if @member}}
                 {{> "map"}}
             {{else}}
-                    <div class="map-access-message">
+                    <div class="map-access-message" data-gate-tier="members">
                         <h1>This map is available to Members</h1>
                         <p>Sign up or log in to view this map.</p>
                         <div class="map-access-cta">
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {{#if @member.paid}}
                     {{> "map"}}
                 {{else}}
-                    <div class="map-access-message">
+                    <div class="map-access-message" data-gate-tier="paid">
                         <h1>This map is available to Supporters</h1>
                         <p>Upgrade your membership to view this map.</p>
                         <div class="map-access-cta">

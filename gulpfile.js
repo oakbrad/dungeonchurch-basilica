@@ -9,7 +9,7 @@ const livereload = require('gulp-livereload');
 const postcss = require('gulp-postcss');
 const zip = require('gulp-zip');
 const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-terser');
 const beeper = require('beeper');
 const fs = require('fs');
 
@@ -61,9 +61,32 @@ function css(done) {
 function js(done) {
     pump([
         src([
-            // pull in lib files first so our own code can depend on it
+            // Vendored libraries shared by the bundled theme scripts (lightbox,
+            // galleries, infinite scroll, video embeds).
             'assets/js/lib/*.js',
-            'assets/js/*.js'
+            // The 3D dice stack is only needed by the roller templates, which load
+            // it themselves in dependency order (three -> cannon -> teal -> dice):
+            // partials/table-roller.hbs and index-table.hbs. Bundling it here would
+            // add ~570KB to every page.
+            '!assets/js/lib/three.min.js',
+            '!assets/js/lib/cannon.min.js',
+            '!assets/js/lib/teal.js',
+            '!assets/js/lib/dice.js',
+            // Theme scripts shared by several templates.
+            'assets/js/*.js',
+            // Every remaining script is loaded by the template that needs it.
+            // Bundling it as well would evaluate it twice and, for the files that
+            // declare top-level `const`s (rolltable, pyoran-roller,
+            // table-scroll-effects), raise "Identifier already declared" — which
+            // kills the whole bundle on those pages.
+            '!assets/js/bestiary.js',
+            '!assets/js/leaflet-custom-icons.js',
+            '!assets/js/livestream-checker.js',
+            '!assets/js/npc-grid.js',
+            '!assets/js/npc-roller.js',
+            '!assets/js/pyoran-roller.js',
+            '!assets/js/rolltable.js',
+            '!assets/js/table-scroll-effects.js'
         ], {sourcemaps: true}),
         concat('casper.js'),
         uglify(),

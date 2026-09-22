@@ -56,7 +56,15 @@ document.addEventListener("DOMContentLoaded", function() {
     containers.forEach(container => {
         const iframe = container.querySelector('iframe');
         if (!iframe) return;
-        
+
+        if (window.dcTrack) {
+            iframe.addEventListener('load', function () {
+                let domain = '';
+                try { domain = new URL(iframe.src).hostname; } catch (e) {}
+                dcTrack('embed-view', {kind: 'wiki-oracle-wide', src_domain: domain});
+            });
+        }
+
         // Check for height from meta tag first (highest priority)
         const heightMeta = document.querySelector('meta[name="custom:oracle-wide-height"]');
         const mobileHeightMeta = document.querySelector('meta[name="custom:oracle-wide-mobile-height"]');
